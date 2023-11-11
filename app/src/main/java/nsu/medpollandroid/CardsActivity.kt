@@ -1,8 +1,10 @@
 package nsu.medpollandroid
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.activity.viewModels
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -29,54 +31,54 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.RecomposeScope
-import androidx.compose.runtime.currentRecomposeScope
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import kotlinx.coroutines.launch
-import nsu.medpollandroid.db.Card
-import nsu.medpollandroid.db.CardsDatabase
-import nsu.medpollandroid.qrreading.QRReader
-import nsu.medpollandroid.qrreading.ReadingResult
+import nsu.medpollandroid.data.Card
+import nsu.medpollandroid.qradding.QRAdder
+import nsu.medpollandroid.repositories.CardsDataRepository
 import nsu.medpollandroid.ui.theme.MedpollTheme
-import org.jetbrains.annotations.Async
 
-class MainActivity : ComponentActivity() {
+class CardsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val cardsViewModel: CardsViewModel by viewModels { CardsViewModel.Factory }
+        val cards = mutableStateOf(emptyList<Card>())
+        lifecycleScope.launch {
+            repeatOnLifecycle(Lifecycle.State.STARTED) {
+                cardsViewModel.listStateFlow.collect { list ->
+                    cards.value = list
+                }
+            }
+        }
+
         setContent {
             MedpollTheme {
-                CardsUI()
+                CardsUI(remember { cards })
             }
         }
     }
 
     @Preview(showBackground = true, showSystemUi = true)
     @Composable
-    private fun CardsUI() {
-        val recomposeScope = currentRecomposeScope
+    private fun CardsUI(@PreviewParameter(SampleCardsProvider::class) cards: MutableState<List<Card>>) {
         val openNameRequestDialog = remember { mutableStateOf(false) }
         val openErrorDialog = remember { mutableStateOf(false) }
         val openDuplicateDialog = remember { mutableStateOf(false) }
-        val cards: List<Card> = emptyList()
-        val values = remember { mutableStateOf(cards) }
-        LaunchedEffect(Unit){// Refuses to work without LaunchedEffect. Says it straightforward.
-            CoroutineScope(Dispatchers.IO).launch {
-                values.value = requestCards()
-            }
-        }
+
         if (openNameRequestDialog.value) {
-            NameRequestDialog(openNameRequestDialog, openErrorDialog, openDuplicateDialog, recomposeScope)
+            NameRequestDialog(cards.value,
+                openNameRequestDialog, openErrorDialog, openDuplicateDialog)
         }
         if (openErrorDialog.value) {
             ErrorDialog(openErrorDialog)
@@ -110,40 +112,17 @@ class MainActivity : ComponentActivity() {
             floatingActionButtonPosition = FabPosition.End,
             backgroundColor = MaterialTheme.colors.background
         ) {
-                /*
-                listOf(
-                    Card(0, "Невролог Ы.Ы. Ыев", "abc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea94"),
-                    Card(1, "Стоматолог А.Ы. Ыыыыыыыыыыыыев", "bbc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea95"),
-                    Card(2, "Хирург Б.Ы. Ыев", "cbc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea96"),
-                    Card(0, "Невролог Ы.Ы. Ыев", "abc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea94"),
-                    Card(1, "Стоматолог А.Ы. Ыыыыыыыыыыыыев", "bbc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea95"),
-                    Card(2, "Хирург Б.Ы. Ыев", "cbc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea96"),
-                    Card(0, "Невролог Ы.Ы. Ыев", "abc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea94"),
-                    Card(1, "Стоматолог А.Ы. Ыыыыыыыыыыыыев", "bbc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea95"),
-                    Card(2, "Хирург Б.Ы. Ыев", "cbc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea96"),
-                    Card(0, "Невролог Ы.Ы. Ыев", "abc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea94"),
-                    Card(1, "Стоматолог А.Ы. Ыыыыыыыыыыыыев", "bbc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea95"),
-                    Card(2, "Хирург Б.Ы. Ыев", "cbc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea96"),
-                    Card(0, "Невролог Ы.Ы. Ыев", "abc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea94"),
-                    Card(1, "Стоматолог А.Ы. Ыыыыыыыыыыыыев", "bbc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea95"),
-                    Card(2, "Хирург Б.Ы. Ыев", "cbc.ru", "148b9149-a3a6-4802-abf0-bd62b501ea96")
-                )
-                */
             Column(
                 modifier = Modifier
                     .padding(it)
                     .verticalScroll(rememberScrollState())
                     .fillMaxWidth() // In order to make list always scrollable by right finger
             ) {
-                values.value.forEach { card ->
-                    SingleCardUIElem(card = card)
+                cards.value.forEach { card ->
+                    SingleCardUIElem(card)
                 }
             }
         }
-    }
-
-    suspend fun requestCards(): List<Card> {
-        return CardsDatabase.getCardsDatabase(applicationContext).cardDao().getAll()
     }
 
     @Composable
@@ -156,8 +135,9 @@ class MainActivity : ComponentActivity() {
             Button(
                 onClick = {
                     /*
-                    TODO
+                    TODO (not implemented)
                     Send an Intent to start "Card Activity"?
+                    Or maybe think of a Navigation component? Not sure yet.
                     */
                 },
                 modifier = Modifier
@@ -185,7 +165,7 @@ class MainActivity : ComponentActivity() {
             }
             Button(
                 onClick = {
-                    /*TODO*/
+                    CardsDataRepository.getInstance(applicationContext).delete(card)
                 },
                 modifier = Modifier
                     .background(MaterialTheme.colors.background)
@@ -202,10 +182,10 @@ class MainActivity : ComponentActivity() {
     }
 
     @Composable
-    fun NameRequestDialog(openNameRequestDialog: MutableState<Boolean>,
+    fun NameRequestDialog(existingCards: List<Card>,
+                          openNameRequestDialog: MutableState<Boolean>,
                           openErrorDialog: MutableState<Boolean>,
-                          openDuplicateDialog: MutableState<Boolean>,
-                          recomposeScope: RecomposeScope) {
+                          openDuplicateDialog: MutableState<Boolean>) {
         val name = remember { mutableStateOf("") }
         AlertDialog(
             onDismissRequest = {
@@ -233,16 +213,9 @@ class MainActivity : ComponentActivity() {
                 ) {
                     Button(
                         onClick = {
-                            val readingResult = ReadingResult()
-                            QRReader.read(applicationContext, name.value, readingResult)
-                            if (readingResult.result == ReadingResult.PossibleResults.FAILURE) {
-                                openErrorDialog.value = true
-                            }
-                            if (readingResult.result == ReadingResult.PossibleResults.EXISTS) {
-                                openDuplicateDialog.value = true
-                            }
+                            QRAdder.addFromQR(applicationContext, name.value, existingCards,
+                                        openErrorDialog, openDuplicateDialog)
                             openNameRequestDialog.value = false
-                            recomposeScope.invalidate()
                         },
                         modifier = Modifier
                             .padding(4.dp)
@@ -274,14 +247,22 @@ class MainActivity : ComponentActivity() {
                 openErrorDialog.value = false
             },
             buttons = {
-                Button(
-                    onClick = {
-                        openErrorDialog.value = false
-                    }
+                Row (
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.cancel_button_text)
-                    )
+                    Button(
+                        onClick = {
+                            openErrorDialog.value = false
+                        },
+                        modifier = Modifier
+                            .padding(4.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.cancel_button_text)
+                        )
+                    }
                 }
             },
             title = {
@@ -304,14 +285,22 @@ class MainActivity : ComponentActivity() {
                 openDuplicateDialog.value = false
             },
             buttons = {
-                Button(
-                    onClick = {
-                        openDuplicateDialog.value = false
-                    }
+                Row (
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
                 ) {
-                    Text(
-                        text = stringResource(id = R.string.cancel_button_text)
-                    )
+                    Button(
+                        onClick = {
+                            openDuplicateDialog.value = false
+                        },
+                        modifier = Modifier
+                            .padding(4.dp)
+                    ) {
+                        Text(
+                            text = stringResource(id = R.string.cancel_button_text)
+                        )
+                    }
                 }
             },
             title = {

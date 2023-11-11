@@ -1,4 +1,4 @@
-package nsu.medpollandroid.db
+package nsu.medpollandroid.data
 
 import android.content.Context
 import androidx.room.Database
@@ -11,13 +11,20 @@ abstract class CardsDatabase : RoomDatabase() {
 
     companion object {
         private var instance: CardsDatabase? = null;
-        @Synchronized fun getCardsDatabase(context: Context): CardsDatabase {
+
+        @Synchronized fun initInstance(context: Context) {
             if (instance == null) {
                 instance = Room.databaseBuilder(
                     context = context,
                     klass = CardsDatabase::class.java,
                     name = "cards_db"
                 ).build()
+            }
+        }
+
+        @Synchronized fun getInstance(context: Context): CardsDatabase {
+            if (instance == null) {
+                initInstance(context)
             }
             return instance!!
         }

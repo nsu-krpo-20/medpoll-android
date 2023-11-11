@@ -2,8 +2,8 @@ package nsu.medpollandroid.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
-val Purple80 = Color(0xFFD0BCFF)
-val PurpleGrey80 = Color(0xFFCCC2DC)
+val HospitalBlue = Color(0xff41c4e8)
+val HospitalGreen = Color(0xff3dd99a)
 
-val Purple40 = Color(0xFF6650a4)
-val PurpleGrey40 = Color(0xFF625b71)
+val DarkerHospitalBlue = Color(0xff3090ab)
+val DarkerHospitalGreen = Color(0xff29966b)

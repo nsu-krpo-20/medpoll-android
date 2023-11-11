@@ -1,4 +1,4 @@
-package nsu.medpollandroid.db
+package nsu.medpollandroid.data
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
