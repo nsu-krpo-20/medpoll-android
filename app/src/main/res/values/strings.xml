@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Medpoll</string>
+    <string name="cards_title">Medpoll: Список карт</string>
+    <string name="add_card_button_text">Добавить карту</string>
+    <string name="delete_button_text">Удалить карту</string>
+    <string name="name_request_dialog_header">Введите название карты</string>
+    <string name="ok_button_text">Ок</string>
+    <string name="cancel_button_text">Отмена</string>
+    <string name="qr_error_msg_title">Ошибка!</string>
+    <string name="qr_error_msg_text">Ошибка при распознавании кода</string>
+    <string name="qr_dup_msg_title">Дубликат!</string>
+    <string name="qr_dup_msg_text">Карта уже есть в списке</string>
 </resources>

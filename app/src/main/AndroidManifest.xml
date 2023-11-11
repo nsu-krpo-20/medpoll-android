@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <application
+        android:name=".MedpollApplication"
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
         android:fullBackupContent="@xml/backup_rules"
@@ -12,8 +13,11 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Medpoll"
         tools:targetApi="31">
+        <meta-data
+            android:name="com.google.mlkit.vision.DEPENDENCIES"
+            android:value="barcode_ui"/>
         <activity
-            android:name=".MainActivity"
+            android:name=".CardsActivity"
             android:exported="true"
             android:label="@string/app_name"
             android:theme="@style/Theme.Medpoll">
