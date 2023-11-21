@@ -73,14 +73,15 @@ class CardsActivity : ComponentActivity() {
     private fun CardsUI(@PreviewParameter(SampleCardsProvider::class) cards: MutableState<List<Card>>) {
         val openNameRequestDialog = remember { mutableStateOf(false) }
         val openErrorDialog = remember { mutableStateOf(false) }
+        val errorMsg = remember { mutableStateOf("") }
         val openDuplicateDialog = remember { mutableStateOf(false) }
 
         if (openNameRequestDialog.value) {
             NameRequestDialog(cards.value,
-                openNameRequestDialog, openErrorDialog, openDuplicateDialog)
+                openNameRequestDialog, openErrorDialog, errorMsg, openDuplicateDialog)
         }
         if (openErrorDialog.value) {
-            ErrorDialog(openErrorDialog)
+            ErrorDialog(openErrorDialog, errorMsg)
         }
         if (openDuplicateDialog.value) {
             DuplicateDialog(openDuplicateDialog)
@@ -184,6 +185,7 @@ class CardsActivity : ComponentActivity() {
     fun NameRequestDialog(existingCards: List<Card>,
                           openNameRequestDialog: MutableState<Boolean>,
                           openErrorDialog: MutableState<Boolean>,
+                          errorMsg: MutableState<String>,
                           openDuplicateDialog: MutableState<Boolean>) {
         val name = remember { mutableStateOf("") }
         AlertDialog(
@@ -213,7 +215,7 @@ class CardsActivity : ComponentActivity() {
                     Button(
                         onClick = {
                             QRAdder.addFromQR(applicationContext, name.value, existingCards,
-                                        openErrorDialog, openDuplicateDialog)
+                                        openErrorDialog, errorMsg, openDuplicateDialog)
                             openNameRequestDialog.value = false
                         },
                         modifier = Modifier
@@ -240,13 +242,13 @@ class CardsActivity : ComponentActivity() {
     }
 
     @Composable
-    fun ErrorDialog(openErrorDialog: MutableState<Boolean>) {
+    fun ErrorDialog(openErrorDialog: MutableState<Boolean>, errorMsg: MutableState<String>) {
         AlertDialog(
             onDismissRequest = {
                 openErrorDialog.value = false
             },
             buttons = {
-                Row (
+                Row(
                     modifier = Modifier
                         .fillMaxWidth(),
                     horizontalArrangement = Arrangement.End
@@ -270,9 +272,17 @@ class CardsActivity : ComponentActivity() {
                 )
             },
             text = {
-                Text(
-                    text = stringResource(id = R.string.qr_error_msg_text)
-                )
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        text = stringResource(id = R.string.qr_error_msg_text)
+                    )
+                    Text(
+                        text = errorMsg.value
+                    )
+                }
             }
         )
     }
