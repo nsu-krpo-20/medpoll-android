@@ -10,4 +10,5 @@
     <string name="qr_error_msg_text">Ошибка при распознавании кода</string>
     <string name="qr_dup_msg_title">Дубликат!</string>
     <string name="qr_dup_msg_text">Карта уже есть в списке</string>
+    <string name="prescriptions_title">Medpoll: Список назначений</string>
 </resources>
