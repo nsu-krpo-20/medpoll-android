@@ -39,9 +39,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
 import nsu.medpollandroid.R
-import nsu.medpollandroid.data.Card
+import nsu.medpollandroid.data.cards.Card
 import nsu.medpollandroid.qradding.QRAdder
-import nsu.medpollandroid.repositories.CardsDataRepository
+import nsu.medpollandroid.repositories.DataRepository
 import nsu.medpollandroid.ui.previewproviders.SampleCardsPreviewProvider
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -148,7 +148,7 @@ private fun SingleCardUIElem(context: Context, card: Card, navController: NavCon
         }
         Button(
             onClick = {
-                CardsDataRepository.getInstance(context).delete(card)
+                DataRepository.getInstance(context).delete(card)
             },
             modifier = Modifier
                 .background(MaterialTheme.colors.background)

@@ -1,4 +1,4 @@
-package nsu.medpollandroid.data
+package nsu.medpollandroid.data.cards
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

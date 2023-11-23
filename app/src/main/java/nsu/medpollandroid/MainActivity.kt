@@ -15,7 +15,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import kotlinx.coroutines.launch
-import nsu.medpollandroid.data.Card
+import nsu.medpollandroid.data.PrescriptionGeneralInfo
+import nsu.medpollandroid.data.cards.Card
 import nsu.medpollandroid.ui.CardsUI
 import nsu.medpollandroid.ui.PrescriptionsUI
 import nsu.medpollandroid.ui.theme.MedpollTheme
@@ -23,11 +24,14 @@ import nsu.medpollandroid.ui.theme.MedpollTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        val cardsViewModel: CardsViewModel by viewModels { CardsViewModel.Factory }
+        val activityViewModel: ActivityViewModel by viewModels { ActivityViewModel.Factory }
         val cards = mutableStateOf(emptyList<Card>())
+
+        val prescriptions = mutableStateOf(emptyList<PrescriptionGeneralInfo>())
+
         lifecycleScope.launch {
             repeatOnLifecycle(Lifecycle.State.STARTED) {
-                cardsViewModel.listStateFlow.collect { list ->
+                activityViewModel.listStateFlow.collect { list ->
                     cards.value = list
                 }
             }
@@ -51,8 +55,7 @@ class MainActivity : ComponentActivity() {
                     ) { backStackEntry ->
                         val apiUrl = backStackEntry.arguments!!.getString("apiUrl")
                         val cardUuid = backStackEntry.arguments!!.getString("cardUuid")
-                        PrescriptionsUI(apiUrl = apiUrl!!, cardUuid = cardUuid!!,
-                            navController = navController)
+                        PrescriptionsUI(remember { prescriptions }, navController)
                     }
                 }
             }

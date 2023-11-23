@@ -3,7 +3,7 @@ package nsu.medpollandroid.ui.previewproviders
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import nsu.medpollandroid.data.Card
+import nsu.medpollandroid.data.cards.Card
 
 class SampleCardsPreviewProvider : PreviewParameterProvider<MutableState<List<Card>>> {
     override val values: Sequence<MutableState<List<Card>>>

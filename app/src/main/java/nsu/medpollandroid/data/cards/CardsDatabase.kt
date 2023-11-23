@@ -1,4 +1,4 @@
-package nsu.medpollandroid.data
+package nsu.medpollandroid.data.cards
 
 import android.content.Context
 import androidx.room.Database

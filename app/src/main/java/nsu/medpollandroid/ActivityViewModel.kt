@@ -8,11 +8,11 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import nsu.medpollandroid.data.Card
-import nsu.medpollandroid.repositories.CardsDataRepository
+import nsu.medpollandroid.data.cards.Card
+import nsu.medpollandroid.repositories.DataRepository
 
-class CardsViewModel(
-    private val cardsDataRepository: CardsDataRepository
+class ActivityViewModel(
+    private val cardsDataRepository: DataRepository
 ) : ViewModel() {
     private val listMutableStateFlow = MutableStateFlow(emptyList<Card>())
 
@@ -35,8 +35,8 @@ class CardsViewModel(
                 extras: CreationExtras
             ): T {
                 val application = checkNotNull(extras[APPLICATION_KEY])
-                return CardsViewModel (
-                    (application as MedpollApplication).cardsDataRepository
+                return ActivityViewModel (
+                    (application as MedpollApplication).dataRepository
                 ) as T
             }
         }

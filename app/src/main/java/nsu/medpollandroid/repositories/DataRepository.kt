@@ -5,10 +5,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import nsu.medpollandroid.data.Card
-import nsu.medpollandroid.data.CardsDatabase
+import nsu.medpollandroid.data.cards.Card
+import nsu.medpollandroid.data.cards.CardsDatabase
 
-class CardsDataRepository private constructor(
+class DataRepository private constructor(
     database: CardsDatabase
 ) {
     private val cardsDatabase = database
@@ -30,15 +30,15 @@ class CardsDataRepository private constructor(
     }
 
     companion object {
-        private var instance: CardsDataRepository? = null;
+        private var instance: DataRepository? = null;
 
         @Synchronized fun initInstance(context: Context) {
             if (instance == null) {
-                instance = CardsDataRepository(CardsDatabase.getInstance(context))
+                instance = DataRepository(CardsDatabase.getInstance(context))
             }
         }
 
-        @Synchronized fun getInstance(context: Context): CardsDataRepository {
+        @Synchronized fun getInstance(context: Context): DataRepository {
             if (instance == null) {
                 initInstance(context)
             }
