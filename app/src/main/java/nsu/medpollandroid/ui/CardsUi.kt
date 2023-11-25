@@ -55,6 +55,7 @@ fun CardsUI(@PreviewParameter(SampleCardsPreviewProvider::class) cards: MutableS
     val openNameRequestDialog = remember { mutableStateOf(false) }
     val openErrorDialog = remember { mutableStateOf(false) }
     val errorMsg = remember { mutableStateOf("") }
+    val dupMsgString = stringResource(R.string.qr_dup_msg_text)
     val openDuplicateDialog = remember { mutableStateOf(false) }
 
     if (openNameRequestDialog.value) {
@@ -62,10 +63,10 @@ fun CardsUI(@PreviewParameter(SampleCardsPreviewProvider::class) cards: MutableS
             openNameRequestDialog, openErrorDialog, errorMsg, openDuplicateDialog)
     }
     if (openErrorDialog.value) {
-        ErrorDialog(openErrorDialog, errorMsg)
+        ErrorDialog(openErrorDialog, errorMsg.value)
     }
     if (openDuplicateDialog.value) {
-        DuplicateDialog(openDuplicateDialog)
+        ErrorDialog(openDuplicateDialog, dupMsgString)
     }
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -165,7 +166,7 @@ private fun SingleCardUIElem(context: Context, card: Card, navController: NavCon
 }
 
 @Composable
-fun NameRequestDialog(context: Context,
+private fun NameRequestDialog(context: Context,
                       existingCards: List<Card>,
                       openNameRequestDialog: MutableState<Boolean>,
                       openErrorDialog: MutableState<Boolean>,
@@ -222,90 +223,6 @@ fun NameRequestDialog(context: Context,
                     )
                 }
             }
-        }
-    )
-}
-
-@Composable
-fun ErrorDialog(openErrorDialog: MutableState<Boolean>, errorMsg: MutableState<String>) {
-    AlertDialog(
-        onDismissRequest = {
-            openErrorDialog.value = false
-        },
-        buttons = {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Button(
-                    onClick = {
-                        openErrorDialog.value = false
-                    },
-                    modifier = Modifier
-                        .padding(4.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.cancel_button_text)
-                    )
-                }
-            }
-        },
-        title = {
-            Text(
-                text = stringResource(id = R.string.qr_error_msg_title)
-            )
-        },
-        text = {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-            ) {
-                Text(
-                    text = stringResource(id = R.string.qr_error_msg_text)
-                )
-                Text(
-                    text = errorMsg.value
-                )
-            }
-        }
-    )
-}
-
-@Composable
-fun DuplicateDialog(openDuplicateDialog: MutableState<Boolean>) {
-    AlertDialog(
-        onDismissRequest = {
-            openDuplicateDialog.value = false
-        },
-        buttons = {
-            Row (
-                modifier = Modifier
-                    .fillMaxWidth(),
-                horizontalArrangement = Arrangement.End
-            ) {
-                Button(
-                    onClick = {
-                        openDuplicateDialog.value = false
-                    },
-                    modifier = Modifier
-                        .padding(4.dp)
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.cancel_button_text)
-                    )
-                }
-            }
-        },
-        title = {
-            Text(
-                text = stringResource(id = R.string.qr_dup_msg_title)
-            )
-        },
-        text = {
-            Text(
-                text = stringResource(id = R.string.qr_dup_msg_text)
-            )
         }
     )
 }

@@ -59,6 +59,15 @@ dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
 
+    val gsonVersion = "2.10.1"
+
+    implementation("com.google.code.gson:gson:$gsonVersion")
+
+    val retrofitVersion = "2.9.0"
+
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
+
     val navVersion = "2.7.5"
 
     implementation("androidx.navigation:navigation-compose:$navVersion")

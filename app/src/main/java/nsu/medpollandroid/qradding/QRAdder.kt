@@ -58,6 +58,9 @@ class QRAdder {
                                         }
                                         apiUrl = httpsPrefix + apiUrlPart.substring(beginningIdx, apiUrlPart.length)
                                     }
+                                    if ('/' != apiUrl.get(apiUrl.length - 1)) {
+                                        apiUrl += "/"
+                                    }
                                     Log.i(
                                         "Adding card",
                                         "Got: name == $nameForNew, url == $apiUrl, uuid == $cardUuid"
