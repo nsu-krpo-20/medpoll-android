@@ -9,6 +9,7 @@
     <string name="error_msg_title">Ошибка!</string>
     <string name="qr_dup_msg_text">Карта уже есть в списке</string>
     <string name="prescriptions_title">Medpoll: Список назначений</string>
+    <string name="prescription_info_title">Medpoll: Назначение</string>
     <string name="prescription_name_format">Назначение #%d</string>
     <string name="prescription_time_format">От: %1$td %1$tB %1$tY %1$tH:%1$tM</string>
     <string name="prescription_author_format">Врач: %s</string>
