@@ -6,8 +6,13 @@
     <string name="name_request_dialog_header">Введите название карты</string>
     <string name="ok_button_text">Ок</string>
     <string name="cancel_button_text">Отмена</string>
-    <string name="qr_error_msg_title">Ошибка!</string>
-    <string name="qr_error_msg_text">Ошибка при распознавании кода</string>
-    <string name="qr_dup_msg_title">Дубликат!</string>
+    <string name="error_msg_title">Ошибка!</string>
     <string name="qr_dup_msg_text">Карта уже есть в списке</string>
+    <string name="prescriptions_title">Medpoll: Список назначений</string>
+    <string name="prescription_name_format">Назначение #%d</string>
+    <string name="prescription_time_format">От: %1$td %1$tB %1$tY %1$tH:%1$tM</string>
+    <string name="prescription_author_format">Врач: %s</string>
+    <string name="prescription_last_modified_format">Изменено: %1$td %1$tB %1$tY %1$tH:%1$tM</string>
+    <string name="update_prescriptions_button_text">Обновить список</string>
+    <string name="net_error_msg">Ошибка в работе с сервером</string>
 </resources>

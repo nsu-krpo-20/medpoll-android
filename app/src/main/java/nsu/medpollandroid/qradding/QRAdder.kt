@@ -3,18 +3,19 @@ package nsu.medpollandroid.qradding
 import android.content.Context
 import android.util.Log
 import androidx.compose.runtime.MutableState
-import com.google.android.gms.common.moduleinstall.InstallStatusListener
 import com.google.android.gms.common.moduleinstall.ModuleInstall
 import com.google.android.gms.common.moduleinstall.ModuleInstallRequest
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
-import nsu.medpollandroid.data.Card
-import nsu.medpollandroid.repositories.CardsDataRepository
+import nsu.medpollandroid.data.cards.Card
+import nsu.medpollandroid.repositories.DataRepository
 
 class QRAdder {
     companion object {
         private const val uuidLength = 36 // 32 + 4 * '-'
+        private const val httpPrefix = "http://"
+        private const val httpsPrefix = "https://"
         fun addFromQR(context: Context, nameForNew: String, existingCards: List<Card>,
                       error: MutableState<Boolean>, errorMsg: MutableState<String>,
                       hasDuplicates: MutableState<Boolean>) {
@@ -44,10 +45,22 @@ class QRAdder {
                                     Log.e("QR", "Empty msg")
                                     error.value = true
                                 } else {
+
                                     val dataLength: Int = rawValue.length;
                                     val cardUuid =
                                         rawValue.substring(dataLength - uuidLength, dataLength)
-                                    val apiUrl = rawValue.substring(0, dataLength - uuidLength)
+                                    val apiUrlPart = rawValue.substring(0, dataLength - uuidLength)
+                                    var apiUrl = apiUrlPart
+                                    if (apiUrlPart.substring(0, httpsPrefix.length) != httpsPrefix) {
+                                        var beginningIdx = 0
+                                        if (apiUrlPart.substring(0, httpPrefix.length) == httpPrefix) {
+                                            beginningIdx = httpPrefix.length
+                                        }
+                                        apiUrl = httpsPrefix + apiUrlPart.substring(beginningIdx, apiUrlPart.length)
+                                    }
+                                    if ('/' != apiUrl.get(apiUrl.length - 1)) {
+                                        apiUrl += "/"
+                                    }
                                     Log.i(
                                         "Adding card",
                                         "Got: name == $nameForNew, url == $apiUrl, uuid == $cardUuid"
@@ -61,7 +74,7 @@ class QRAdder {
                                         Log.e("QR adding", "Got duplicate")
                                         hasDuplicates.value = true
                                     } else {
-                                        val repository = CardsDataRepository.getInstance(context)
+                                        val repository = DataRepository.getInstance(context)
                                         repository.insert(card)
                                         Log.d("QR adding", "Success")
                                     }

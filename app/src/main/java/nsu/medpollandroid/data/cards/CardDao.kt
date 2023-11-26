@@ -1,4 +1,4 @@
-package nsu.medpollandroid.data
+package nsu.medpollandroid.data.cards
 
 import androidx.room.Dao
 import androidx.room.Delete

@@ -59,6 +59,19 @@ dependencies {
     implementation("androidx.core:core-ktx:1.9.0")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.3.9")
 
+    val gsonVersion = "2.10.1"
+
+    implementation("com.google.code.gson:gson:$gsonVersion")
+
+    val retrofitVersion = "2.9.0"
+
+    implementation("com.squareup.retrofit2:retrofit:$retrofitVersion")
+    implementation("com.squareup.retrofit2:converter-gson:$retrofitVersion")
+
+    val navVersion = "2.7.5"
+
+    implementation("androidx.navigation:navigation-compose:$navVersion")
+
     val lifecycleVersion = "2.6.2"
     implementation("androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycleVersion")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycleVersion")
@@ -70,22 +83,15 @@ dependencies {
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
 
-    /*
-    Studio suggests using material3 after creating project, but there are many
-    unstable API features in it, so I suggest not using it in order not to
-    get bothered with dozens of @OptIn(ExperimentalSmth) and other stuff
-    */
-    implementation("androidx.compose.material:material")
-
     val roomVersion = "2.6.0"
     implementation("androidx.room:room-runtime:$roomVersion")
-    //annotationProcessor("androidx.room:room-compiler:$roomVersion")
 
     ksp("androidx.room:room-compiler:$roomVersion")
     implementation("androidx.room:room-ktx:$roomVersion")
 
     implementation("com.google.android.gms:play-services-code-scanner:16.1.0")
 
+    implementation("androidx.compose.material:material")
     testImplementation("junit:junit:4.13.2")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")

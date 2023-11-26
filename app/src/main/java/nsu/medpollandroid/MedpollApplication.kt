@@ -1,16 +1,16 @@
 package nsu.medpollandroid
 
 import android.app.Application
-import nsu.medpollandroid.data.CardsDatabase
-import nsu.medpollandroid.repositories.CardsDataRepository
+import nsu.medpollandroid.data.cards.CardsDatabase
+import nsu.medpollandroid.repositories.DataRepository
 
 class MedpollApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         CardsDatabase.initInstance(this)
-        cardsDataRepository = CardsDataRepository.getInstance(this)
+        dataRepository = DataRepository.getInstance(this)
     }
 
-    lateinit var cardsDataRepository: CardsDataRepository
+    lateinit var dataRepository: DataRepository
         private set
 }
