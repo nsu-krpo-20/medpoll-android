@@ -8,6 +8,7 @@ import com.google.android.gms.common.moduleinstall.ModuleInstallRequest
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
+import nsu.medpollandroid.MedpollApplication
 import nsu.medpollandroid.data.cards.Card
 import nsu.medpollandroid.repositories.DataRepository
 
@@ -74,7 +75,8 @@ class QRAdder {
                                         Log.e("QR adding", "Got duplicate")
                                         hasDuplicates.value = true
                                     } else {
-                                        val repository = DataRepository.getInstance(context)
+                                        val application = context.applicationContext as MedpollApplication
+                                        val repository = application.repositories.cardRepository
                                         repository.insert(card)
                                         Log.d("QR adding", "Success")
                                     }

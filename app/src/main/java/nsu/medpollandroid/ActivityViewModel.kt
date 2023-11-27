@@ -15,9 +15,11 @@ import kotlinx.coroutines.launch
 import nsu.medpollandroid.data.PrescriptionGeneralInfo
 import nsu.medpollandroid.data.cards.Card
 import nsu.medpollandroid.repositories.DataRepository
+import nsu.medpollandroid.repositories.IRepositories
+import nsu.medpollandroid.repositories.Repositories
 
 class ActivityViewModel(
-    private val dataRepository: DataRepository
+    private val repositories: IRepositories
 ) : ViewModel() {
     private val listMutableStateFlow = MutableStateFlow(emptyList<Card>())
 
@@ -25,7 +27,7 @@ class ActivityViewModel(
 
     init {
         viewModelScope.launch {
-            dataRepository.getAll()
+            repositories.cardRepository.getAll()
                 .collect { cardsList ->
                     listMutableStateFlow.value = cardsList
                 }
@@ -49,7 +51,7 @@ class ActivityViewModel(
         }
         viewModelScope.launch {
             val requestResult =
-                dataRepository.getPrescriptions(apiUrl, cardUuid)
+                repositories.prescriptionRepository.getPrescriptions(apiUrl, cardUuid)
             if (requestResult != null) {
                 prescriptionsInfoListMutableState.value = requestResult
             }
@@ -69,7 +71,7 @@ class ActivityViewModel(
             ): T {
                 val application = checkNotNull(extras[APPLICATION_KEY])
                 return ActivityViewModel (
-                    (application as MedpollApplication).dataRepository
+                    (application as MedpollApplication).repositories
                 ) as T
             }
         }

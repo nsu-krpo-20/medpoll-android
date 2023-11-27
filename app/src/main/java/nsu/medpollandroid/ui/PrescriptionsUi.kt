@@ -26,6 +26,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import androidx.navigation.navArgument
 import nsu.medpollandroid.MainActivity
 import nsu.medpollandroid.R
 import nsu.medpollandroid.data.PrescriptionGeneralInfo
@@ -94,8 +95,7 @@ private fun SinglePrescriptionUIElem(prescription: PrescriptionGeneralInfo,
     */
     Button(
         onClick = {
-            // TODO(not implemented)
-            // navController.navigate(...)
+            navController?.navigate(String.format("prescription/%d", prescription.id))
         },
         modifier = Modifier
             .fillMaxWidth(),

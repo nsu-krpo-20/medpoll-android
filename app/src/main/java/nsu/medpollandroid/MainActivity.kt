@@ -6,6 +6,7 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -19,6 +20,7 @@ import kotlinx.coroutines.launch
 import nsu.medpollandroid.data.cards.Card
 import nsu.medpollandroid.ui.CardsUI
 import nsu.medpollandroid.ui.ErrorDialog
+import nsu.medpollandroid.ui.PrescriptionInfo
 import nsu.medpollandroid.ui.PrescriptionsUI
 import nsu.medpollandroid.ui.theme.MedpollTheme
 
@@ -46,6 +48,15 @@ class MainActivity : ComponentActivity() {
                         "cards"
                     ) {
                         CardsUI(remember { cards }, navController)
+                    }
+                    composable(
+                        "prescription/{id}",
+                        arguments = listOf(
+                            navArgument("id") { type = NavType.LongType }
+                        )
+                    ) {backStackEntry ->
+                        val id = backStackEntry.arguments!!.getLong("id")
+                        PrescriptionInfo(id)
                     }
                     composable(
                         "prescriptions/{apiUrl}/{cardUuid}",

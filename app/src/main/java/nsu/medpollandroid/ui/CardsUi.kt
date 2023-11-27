@@ -38,6 +38,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavController
+import nsu.medpollandroid.MedpollApplication
 import nsu.medpollandroid.R
 import nsu.medpollandroid.data.cards.Card
 import nsu.medpollandroid.qradding.QRAdder
@@ -109,6 +110,8 @@ fun CardsUI(@PreviewParameter(SampleCardsPreviewProvider::class) cards: MutableS
 
 @Composable
 private fun SingleCardUIElem(context: Context, card: Card, navController: NavController?) {
+    val application = LocalContext.current.applicationContext as MedpollApplication
+
     Row (
         modifier = Modifier
             .fillMaxWidth()
@@ -149,7 +152,7 @@ private fun SingleCardUIElem(context: Context, card: Card, navController: NavCon
         }
         Button(
             onClick = {
-                DataRepository.getInstance(context).delete(card)
+                  application.repositories.cardRepository.delete(card)
             },
             modifier = Modifier
                 .background(MaterialTheme.colors.background)
