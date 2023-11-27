@@ -63,18 +63,22 @@ fun Int.leftZeroPad(until: Int): String {
     return toString().leftZeroPad(until)
 }
 
-fun Int.timesString(): String {
+fun Int.daysString(): String {
     if (this < 0) {
         throw IllegalArgumentException("Times integer must be positive")
     }
 
+    if (this == 1) {
+        return "день"
+    }
+
     if ((this / 10) % 10 == 1) {
-        return "раз"
+        return "дней"
     }
 
     if (this % 10 in 2..4) {
-        return "раза"
+        return "дня"
     }
 
-    return "раз"
+    return "дней"
 }

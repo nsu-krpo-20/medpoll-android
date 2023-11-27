@@ -5,6 +5,6 @@ import nsu.medpollandroid.data.PrescriptionGeneralInfo
 import nsu.medpollandroid.ui_data.PrescriptionInfoData
 
 interface IPrescriptionRepository {
-    fun getPrescription(id: Int): Flow<PrescriptionInfoData>
+    fun getPrescription(id: Long): Flow<PrescriptionInfoData>
     suspend fun getPrescriptions(apiUrl: String, cardUuid: String): List<PrescriptionGeneralInfo>?
 }

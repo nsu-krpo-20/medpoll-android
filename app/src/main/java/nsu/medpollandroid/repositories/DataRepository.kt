@@ -87,7 +87,7 @@ class DataRepository @Inject constructor(
         }
     }*/
 
-    override fun getPrescription(id: Int): Flow<PrescriptionInfoData> {
+    override fun getPrescription(id: Long): Flow<PrescriptionInfoData> {
         TODO("Not yet implemented")
     }
 }

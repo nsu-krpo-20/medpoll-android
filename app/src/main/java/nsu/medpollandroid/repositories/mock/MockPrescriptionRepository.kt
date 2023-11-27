@@ -10,7 +10,7 @@ import nsu.medpollandroid.ui_data.PrescriptionInfoData
 import javax.inject.Inject
 
 class MockPrescriptionRepository @Inject constructor(): IPrescriptionRepository {
-    override fun getPrescription(id: Int): Flow<PrescriptionInfoData> {
+    override fun getPrescription(id: Long): Flow<PrescriptionInfoData> {
         return SamplePrescriptionInfoPreviewProvider()
             .values
             .asFlow()
