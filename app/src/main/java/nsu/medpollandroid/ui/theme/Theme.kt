@@ -5,6 +5,7 @@ import androidx.compose.material.MaterialTheme
 import androidx.compose.material.darkColors
 import androidx.compose.material.lightColors
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val darkColorScheme = darkColors(
     primary = DarkerHospitalBlue,
@@ -13,7 +14,7 @@ private val darkColorScheme = darkColors(
 
 private val lightColorScheme = lightColors(
     primary = HospitalBlue,
-    secondary = HospitalGreen
+    secondary = HospitalGreen,
 
     /* Other default colors to override
     background = Color(0xFFFFFBFE),

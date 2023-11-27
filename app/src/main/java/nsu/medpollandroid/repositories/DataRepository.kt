@@ -2,6 +2,10 @@ package nsu.medpollandroid.repositories
 
 import android.content.Context
 import android.util.Log
+import dagger.Binds
+import dagger.Module
+import dagger.Provides
+import dagger.hilt.InstallIn
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
@@ -10,26 +14,28 @@ import nsu.medpollandroid.data.cards.Card
 import nsu.medpollandroid.data.cards.CardsDatabase
 import nsu.medpollandroid.data.MedpollApi
 import nsu.medpollandroid.data.PrescriptionGeneralInfo
+import nsu.medpollandroid.ui_data.PrescriptionInfoData
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
+import javax.inject.Inject
 
-class DataRepository private constructor(
+class DataRepository @Inject constructor(
     database: CardsDatabase
-) {
+): IPrescriptionRepository, ICardRepository {
     private val cardsDatabase = database
 
-    fun getAll(): Flow<List<Card>> {
+    override fun getAll(): Flow<List<Card>> {
         return cardsDatabase.cardDao().getAll()
     }
 
-    fun insert(card: Card) {
+    override fun insert(card: Card) {
         CoroutineScope(Dispatchers.IO).launch {
             cardsDatabase.cardDao().insert(card)
         }
     }
 
-    fun delete(card: Card) {
+    override fun delete(card: Card) {
         CoroutineScope(Dispatchers.IO).launch {
             cardsDatabase.cardDao().delete(card)
         }
@@ -51,7 +57,7 @@ class DataRepository private constructor(
         }
     }
 
-    suspend fun getPrescriptions(apiUrl: String, cardUuid: String): List<PrescriptionGeneralInfo>? {
+    override suspend fun getPrescriptions(apiUrl: String, cardUuid: String): List<PrescriptionGeneralInfo>? {
         if ((this.apiUrl != apiUrl) || (this.cardUuid != cardUuid)) {
             setCardData(apiUrl, cardUuid)
         }
@@ -64,7 +70,7 @@ class DataRepository private constructor(
         }
     }
 
-    companion object {
+    /*companion object {
         private var instance: DataRepository? = null;
 
         @Synchronized fun initInstance(context: Context) {
@@ -79,5 +85,9 @@ class DataRepository private constructor(
             }
             return instance!!
         }
+    }*/
+
+    override fun getPrescription(id: Int): Flow<PrescriptionInfoData> {
+        TODO("Not yet implemented")
     }
 }

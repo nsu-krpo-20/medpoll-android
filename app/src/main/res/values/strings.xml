@@ -16,4 +16,18 @@
     <string name="prescription_last_modified_format">Изменено: %1$td %1$tB %1$tY %1$tH:%1$tM</string>
     <string name="update_prescriptions_button_text">Обновить список</string>
     <string name="net_error_msg">Ошибка в работе с сервером</string>
+    <string name="medicine">Лекарства</string>
+    <string name="metrics">Метрики</string>
+    <string name="doctor">Врач</string>
+    <string name="created">Создано</string>
+    <string name="per_day_in">%1$s %2$s в день в %3$s</string>
+    <string name="on_mondays">В понедельник</string>
+    <string name="on_tuesdays">Во вторник</string>
+    <string name="on_wednesdays">В среду</string>
+    <string name="on_thursdays">В четверг</string>
+    <string name="on_fridays">В пятницу</string>
+    <string name="on_saturdays">В субботу</string>
+    <string name="on_sundays">В воскресенье</string>
+    <string name="on_weekday_at_the_time">%1$s в следующее время:</string>
+    <string name="each_day_at_the_time">Каждый день в следующее время:</string>
 </resources>
