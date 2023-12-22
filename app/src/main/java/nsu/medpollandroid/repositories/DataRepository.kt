@@ -70,23 +70,6 @@ class DataRepository @Inject constructor(
         }
     }
 
-    /*companion object {
-        private var instance: DataRepository? = null;
-
-        @Synchronized fun initInstance(context: Context) {
-            if (instance == null) {
-                instance = DataRepository(CardsDatabase.getInstance(context))
-            }
-        }
-
-        @Synchronized fun getInstance(context: Context): DataRepository {
-            if (instance == null) {
-                initInstance(context)
-            }
-            return instance!!
-        }
-    }*/
-
     override fun getPrescription(id: Long): Flow<PrescriptionInfoData> {
         TODO("Not yet implemented")
     }

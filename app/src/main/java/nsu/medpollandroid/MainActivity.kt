@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.lifecycleScope
@@ -47,7 +46,12 @@ class MainActivity : ComponentActivity() {
                     composable(
                         "cards"
                     ) {
-                        CardsUI(remember { cards }, navController)
+                        val goToPrescriptionsFunc = { apiUrl: String, cardUuid: String ->
+                            navController.navigate(
+                                String.format("prescriptions/%s/%s", apiUrl, cardUuid)
+                            )
+                        }
+                        CardsUI(remember { cards }, goToPrescriptionsFunc)
                     }
                     composable(
                         "prescription/{id}",
@@ -82,29 +86,25 @@ class MainActivity : ComponentActivity() {
                             ErrorDialog(updateFailure, stringResource(R.string.net_error_msg))
                         }
                         else {
-                            val updatePrescriptionsListProvider =
-                                object : UpdatePrescriptionsListProvider {
-                                    override fun updatePrescriptionsList() {
-                                        activityViewModel.updatePrescriptionsListFor(apiUrl, cardUuid, updateFailure)
-                                    }
-                                }
+                            val updatePrescriptionsListFunc = {
+                                activityViewModel.updatePrescriptionsListFor(apiUrl, cardUuid, updateFailure)
+                            }
                             if (!initialRequestSent.value) {
-                                updatePrescriptionsListProvider.updatePrescriptionsList()
+                                updatePrescriptionsListFunc()
                                 initialRequestSent.value = true
+                            }
+                            val goToPrescriptionFunc = { id: Long ->
+                                navController.navigate(String.format("prescription/%d", id))
                             }
                             PrescriptionsUI(
                                 remember { prescriptions },
-                                navController,
-                                updatePrescriptionsListProvider
+                                goToPrescriptionFunc,
+                                updatePrescriptionsListFunc
                             )
                         }
                     }
                 }
             }
         }
-    }
-
-    interface UpdatePrescriptionsListProvider {
-        fun updatePrescriptionsList()
     }
 }

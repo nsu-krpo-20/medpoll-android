@@ -275,7 +275,7 @@ fun PrescriptionInfo(
             ) {
                 PrimaryRow {
                     SecondaryText(text = stringResource(R.string.created), horizontalPadding = 8.dp)
-                    val date = Date(data.creationTimestamp)
+                    val date = Date(data.creationTimestamp * 1000 /* milliseconds */)
                     val calendar: Calendar = Calendar.getInstance()
                     calendar.time = date
                     Row {
