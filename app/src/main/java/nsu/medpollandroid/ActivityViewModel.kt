@@ -45,7 +45,7 @@ class ActivityViewModel(
             prescriptionsInfoListMutableStateFlow.value = emptyList()
             this.apiUrl = apiUrl
             this.cardUuid = cardUuid
-            //curPrescriptionsWatchJob?.cancel()
+            curPrescriptionsWatchJob?.cancel()
             curPrescriptionsWatchJob = viewModelScope.launch {
                 repositories.prescriptionRepository.getPrescriptionsList(apiUrl, cardUuid)
                     .collect { prescriptionsList ->
@@ -70,7 +70,7 @@ class ActivityViewModel(
         if (prescriptionId != id) {
             prescriptionMutableStateFlow.value = null
             prescriptionId = id
-            //curPrescriptionWatchJob?.cancel()
+            curPrescriptionWatchJob?.cancel()
             curPrescriptionWatchJob = viewModelScope.launch {
                 repositories.prescriptionRepository.getPrescription(id)
                     .collect { prescriptionInfo ->
