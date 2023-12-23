@@ -254,7 +254,7 @@ fun PrescriptionInfo(
     @PreviewParameter(SamplePrescriptionInfoPreviewProvider::class)
         prescriptionState: State<PrescriptionInfoData?>
 ) {
-    val data = prescriptionState.value ?: return
+    val data = prescriptionState.value
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -274,6 +274,7 @@ fun PrescriptionInfo(
                     .padding(10.dp)
                     .fillMaxWidth(),
             ) {
+                if (data == null) return@Column
                 PrimaryRow {
                     SecondaryText(text = stringResource(R.string.created), horizontalPadding = 8.dp)
                     val date = Date(data.creationTimestamp)
