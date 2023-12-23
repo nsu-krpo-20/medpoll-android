@@ -1,11 +1,11 @@
 package nsu.medpollandroid.ui.previewproviders
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import nsu.medpollandroid.ui_data.Medicine
-import nsu.medpollandroid.ui_data.Metric
-import nsu.medpollandroid.ui_data.PrescriptionInfoData
-import nsu.medpollandroid.ui_data.PrescriptionPeriod
-import nsu.medpollandroid.ui_data.TimeOfDay
+import nsu.medpollandroid.data.prescriptions.Medicine
+import nsu.medpollandroid.data.prescriptions.Metric
+import nsu.medpollandroid.data.prescriptions.PrescriptionInfoData
+import nsu.medpollandroid.data.prescriptions.PrescriptionPeriod
+import nsu.medpollandroid.data.prescriptions.TimeOfDay
 import nsu.medpollandroid.utils.listOfWeekdays
 
 class SamplePrescriptionInfoPreviewProvider: PreviewParameterProvider<PrescriptionInfoData> {

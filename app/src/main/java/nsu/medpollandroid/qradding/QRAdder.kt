@@ -10,7 +10,6 @@ import com.google.mlkit.vision.codescanner.GmsBarcodeScannerOptions
 import com.google.mlkit.vision.codescanner.GmsBarcodeScanning
 import nsu.medpollandroid.MedpollApplication
 import nsu.medpollandroid.data.cards.Card
-import nsu.medpollandroid.repositories.DataRepository
 
 class QRAdder {
     companion object {
@@ -77,7 +76,7 @@ class QRAdder {
                                     } else {
                                         val application = context.applicationContext as MedpollApplication
                                         val repository = application.repositories.cardRepository
-                                        repository.insert(card)
+                                        repository.insertCard(card)
                                         Log.d("QR adding", "Success")
                                     }
                                 }

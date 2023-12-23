@@ -2,11 +2,12 @@ package nsu.medpollandroid.repositories.mock
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.asFlow
-import nsu.medpollandroid.data.PrescriptionGeneralInfo
+import kotlinx.coroutines.flow.flow
+import nsu.medpollandroid.data.prescriptions.PrescriptionInfoData
+import nsu.medpollandroid.data.prescriptions.db.PrescriptionEntity
 import nsu.medpollandroid.repositories.IPrescriptionRepository
 import nsu.medpollandroid.ui.previewproviders.SamplePrescriptionInfoPreviewProvider
 import nsu.medpollandroid.ui.previewproviders.SamplePrescriptionsPreviewProvider
-import nsu.medpollandroid.ui_data.PrescriptionInfoData
 import javax.inject.Inject
 
 class MockPrescriptionRepository @Inject constructor(): IPrescriptionRepository {
@@ -16,13 +17,24 @@ class MockPrescriptionRepository @Inject constructor(): IPrescriptionRepository 
             .asFlow()
     }
 
-    override suspend fun getPrescriptions(
+    override fun updateLocalPrescriptions() {
+
+    }
+
+    override fun updateLocalPrescriptions(apiUrl: String, cardUuid: String) {
+
+    }
+
+    override fun getPrescriptionsList(
         apiUrl: String,
         cardUuid: String
-    ): List<PrescriptionGeneralInfo>? {
-        return SamplePrescriptionsPreviewProvider()
-            .values
-            .map { s -> s.value }
-            .first()
+    ): Flow<List<PrescriptionEntity>> {
+        return flow {
+            emit (SamplePrescriptionsPreviewProvider()
+                    .values
+                    .map { s -> s.value }
+                    .first()
+            )
+        }
     }
 }

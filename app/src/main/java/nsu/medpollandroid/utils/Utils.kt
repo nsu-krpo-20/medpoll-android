@@ -1,6 +1,6 @@
 package nsu.medpollandroid.utils
 
-import nsu.medpollandroid.ui_data.TimeOfDay
+import nsu.medpollandroid.data.prescriptions.TimeOfDay
 import java.text.SimpleDateFormat
 import java.util.Date
 

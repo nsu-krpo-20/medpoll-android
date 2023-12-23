@@ -4,10 +4,10 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import nsu.medpollandroid.MedpollApplication
 import nsu.medpollandroid.repositories.mock.MockCardRepository
 import nsu.medpollandroid.repositories.mock.MockPrescriptionRepository
 import nsu.medpollandroid.repositories.mock.MockRepositories
+import nsu.medpollandroid.utils.Mock
 import nsu.medpollandroid.utils.Production
 import javax.inject.Singleton
 
@@ -16,7 +16,7 @@ import javax.inject.Singleton
 object RepositoriesModule {
     @Singleton
     @Provides
-    @Production
+    @Mock
     fun provideMockRepositories(
         prescriptionRepository: MockPrescriptionRepository,
         cardRepository: MockCardRepository
@@ -24,6 +24,17 @@ object RepositoriesModule {
         return MockRepositories(
             prescriptionRepository,
             cardRepository
+        )
+    }
+
+    @Singleton
+    @Provides
+    @Production
+    fun provideRepositories(
+        dataRepository: DataRepository
+    ): IRepositories {
+        return Repositories(
+            dataRepository
         )
     }
 }

@@ -3,12 +3,12 @@ package nsu.medpollandroid.ui.previewproviders
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
-import nsu.medpollandroid.data.PrescriptionGeneralInfo
+import nsu.medpollandroid.data.prescriptions.db.PrescriptionEntity
 
-class SamplePrescriptionsPreviewProvider : PreviewParameterProvider<MutableState<List<PrescriptionGeneralInfo>>> {
-    override val values: Sequence<MutableState<List<PrescriptionGeneralInfo>>>
+class SamplePrescriptionsPreviewProvider : PreviewParameterProvider<MutableState<List<PrescriptionEntity>>> {
+    override val values: Sequence<MutableState<List<PrescriptionEntity>>>
         get() = sequenceOf(mutableStateOf(listOf(
-            PrescriptionGeneralInfo(
+            PrescriptionEntity(
                 0,
                 1,
                 1697360400,
@@ -16,7 +16,7 @@ class SamplePrescriptionsPreviewProvider : PreviewParameterProvider<MutableState
                 "Пирогов Николай Иванович",
                 true
             ),
-            PrescriptionGeneralInfo(
+            PrescriptionEntity(
                 1,
                 1,
                 1697360400,

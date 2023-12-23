@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ExtendedFloatingActionButton
@@ -30,6 +28,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -49,7 +48,7 @@ import java.nio.charset.StandardCharsets
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun CardsUI(@PreviewParameter(SampleCardsPreviewProvider::class) cards: MutableState<List<Card>>,
+fun CardsUI(@PreviewParameter(SampleCardsPreviewProvider::class) cards: State<List<Card>>,
             goToPrescriptions: (apiUrl: String, cardUuid: String) -> Unit = { _, _ ->  }) {
     val context = LocalContext.current
     val openNameRequestDialog = remember { mutableStateOf(false) }
@@ -95,7 +94,7 @@ fun CardsUI(@PreviewParameter(SampleCardsPreviewProvider::class) cards: MutableS
         backgroundColor = MaterialTheme.colors.background
     ) {
         LazyColumn(
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(1.dp),
             modifier = Modifier
                 .padding(it)
                 .fillMaxWidth() // In order to make list always scrollable by right finger
@@ -149,7 +148,7 @@ private fun SingleCardUIElem(card: Card,
         }
         Button(
             onClick = {
-                  application.repositories.cardRepository.delete(card)
+                  application.repositories.cardRepository.deleteCard(card)
             },
             modifier = Modifier
                 .background(MaterialTheme.colors.background)

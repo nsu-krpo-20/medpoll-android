@@ -1,10 +1,15 @@
 package nsu.medpollandroid.repositories
 
 import kotlinx.coroutines.flow.Flow
-import nsu.medpollandroid.data.PrescriptionGeneralInfo
-import nsu.medpollandroid.ui_data.PrescriptionInfoData
+import nsu.medpollandroid.data.prescriptions.PrescriptionInfoData
+import nsu.medpollandroid.data.prescriptions.db.PrescriptionEntity
 
 interface IPrescriptionRepository {
     fun getPrescription(id: Long): Flow<PrescriptionInfoData>
-    suspend fun getPrescriptions(apiUrl: String, cardUuid: String): List<PrescriptionGeneralInfo>?
+
+    fun getPrescriptionsList(apiUrl: String, cardUuid: String): Flow<List<PrescriptionEntity>>
+
+    fun updateLocalPrescriptions()
+
+    fun updateLocalPrescriptions(apiUrl: String, cardUuid: String)
 }
