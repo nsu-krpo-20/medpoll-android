@@ -10,6 +10,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import nsu.medpollandroid.data.cards.CardsDatabase
 import nsu.medpollandroid.data.prescriptions.db.PrescriptionsDatabase
+import nsu.medpollandroid.repositories.IRepositories
 import javax.inject.Singleton
 
 @Module

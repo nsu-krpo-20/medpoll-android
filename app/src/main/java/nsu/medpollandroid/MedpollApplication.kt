@@ -5,10 +5,9 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.content.Context
 import android.os.Build
-import androidx.work.WorkManager
 import dagger.hilt.android.HiltAndroidApp
 import nsu.medpollandroid.repositories.IRepositories
-//import nsu.medpollandroid.utils.MedpollNotificationsManager
+import nsu.medpollandroid.utils.MedpollNotificationsManager
 import nsu.medpollandroid.utils.Production
 import javax.inject.Inject
 
@@ -18,7 +17,8 @@ class MedpollApplication : Application() {
     @Production
     @Inject lateinit var repositories: IRepositories
 
-    //@Inject lateinit var medpollNotificationsManager: MedpollNotificationsManager
+    @Production
+    @Inject lateinit var medpollNotificationsManager: MedpollNotificationsManager
 
     override fun onCreate() {
         super.onCreate()

@@ -14,7 +14,7 @@ class SamplePrescriptionInfoPreviewProvider: PreviewParameterProvider<Prescripti
             PrescriptionInfoData(
                 id = 0,
                 isActive = true,
-                creationTimestamp = 1_697_356_800,
+                creationTimestamp = 1_697_356_800000,
                 doctorFullName = "Пирогов Николай Иванович",
                 medicines = listOf(
                     Medicine(

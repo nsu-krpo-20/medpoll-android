@@ -111,7 +111,7 @@ data class PrescriptionInfoData(
 }
 
 fun periodNTimesDailyFromIntsList(data: List<Int>): PrescriptionPeriod.NTimesDaily {
-    val timesOfDay = data.map { TimeOfDay(it / (60*60), it % (60*60)) }
+    val timesOfDay = data.map { TimeOfDay(it / (60*60), (it / 60) % 60) }
     return PrescriptionPeriod.NTimesDaily(timesOfDay)
 }
 
@@ -127,7 +127,7 @@ fun periodEachNDaysFromRawData(data: String): PrescriptionPeriod.EachNDays {
     val type = object : TypeToken<List<Int>>() {}.type
     val dataParsed: List<Int> = gson.fromJson(data, type)
     val period = dataParsed[0]
-    val timeOfDay = TimeOfDay(dataParsed[1] / (60*60), dataParsed[1] % (60*60))
+    val timeOfDay = TimeOfDay(dataParsed[1] / (60*60), (dataParsed[1] / 60) % 60)
     return PrescriptionPeriod.EachNDays(period, timeOfDay)
 }
 

@@ -12,8 +12,8 @@ class SamplePrescriptionsPreviewProvider : PreviewParameterProvider<MutableState
                 0,
                 "abc.ru",
                 1,
-                1697360400,
-                1697360400,
+                1697360400000,
+                1697360400000,
                 "Пирогов Николай Иванович",
                 true
             ),
@@ -21,8 +21,8 @@ class SamplePrescriptionsPreviewProvider : PreviewParameterProvider<MutableState
                 1,
                 "bbc.ru",
                 1,
-                1697360400,
-                1697367600,
+                1697360400000,
+                1697367600000,
                 "Мешалкин Евгений Николаевич",
                 true
             )
