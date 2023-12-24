@@ -79,7 +79,6 @@ class DataRepository @Inject constructor(
                     "Response for prescription is successful, but body is empty")
                 continue
             }
-            //prescriptionsAllInfo.meds.get(0).period = "[68700]"
             prescriptionsDatabase.prescriptionsDao().insertAllPrescriptionData(
                 prescriptionsAllInfo.toDbEntity(apiUrl)
             )
