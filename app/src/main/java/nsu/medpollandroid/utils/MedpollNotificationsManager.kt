@@ -403,6 +403,6 @@ class MedpollNotificationsManager (
     private val notifyingJobsChainExists: MutableMap<String, Boolean> = mutableMapOf()
 
     companion object {
-        private const val UNIFICATION_OF_NOTIFICATIONS_DELAY_MS: Long = 5 * 60000
+        private const val UNIFICATION_OF_NOTIFICATIONS_DELAY_MS: Long = 5 * 60000L
     }
 }
