@@ -90,6 +90,8 @@ data class Metric(
     }
 }
 data class PrescriptionInfoData(
+    val id: Long,
+    val isActive: Boolean,
     val creationTimestamp: Long,
     val doctorFullName: String,
     val medicines: List<Medicine>,
@@ -184,6 +186,7 @@ fun MetricEntity.transformToNormal(): Metric {
 fun PrescriptionWithMedsAndMetrics.transformToNormal(): PrescriptionInfoData {
     val medsTransformed = meds.map { it.transformToNormal() }
     val metricsTransformed = metrics.map { it.transformToNormal() }
-    return PrescriptionInfoData(prescription.createdTime, prescription.doctorFullName,
+    return PrescriptionInfoData(prescription.id, prescription.isActive,
+        prescription.createdTime, prescription.doctorFullName,
         medsTransformed, metricsTransformed)
 }

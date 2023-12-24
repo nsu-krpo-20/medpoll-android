@@ -25,6 +25,8 @@ import nsu.medpollandroid.ui.CardsUI
 import nsu.medpollandroid.ui.PrescriptionInfo
 import nsu.medpollandroid.ui.PrescriptionsUI
 import nsu.medpollandroid.ui.theme.MedpollTheme
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -49,13 +51,15 @@ class MainActivity : ComponentActivity() {
                         CardsUI(cards, goToPrescriptionsFunc)
                     }
                     composable(
-                        "prescription/{id}",
+                        "prescription/{apiUrl}/{id}",
                         arguments = listOf(
+                            navArgument("apiUrl") { type = NavType.StringType },
                             navArgument("id") { type = NavType.LongType }
                         )
                     ) {backStackEntry ->
+                        val apiUrl = backStackEntry.arguments!!.getString("apiUrl")!!
                         val id = backStackEntry.arguments!!.getLong("id")
-                        activityViewModel.readPrescriptionFor(id)
+                        activityViewModel.readPrescriptionFor(apiUrl, id)
                         PrescriptionInfo(prescription)
                     }
                     composable(
@@ -67,13 +71,15 @@ class MainActivity : ComponentActivity() {
                     ) { backStackEntry ->
                         val apiUrl = backStackEntry.arguments!!.getString("apiUrl")!!
                         val cardUuid = backStackEntry.arguments!!.getString("cardUuid")!!
+                        val encodedUrl =
+                            URLEncoder.encode(apiUrl, StandardCharsets.UTF_8.toString())
 
                         activityViewModel.readLocalPrescriptionsListFor(apiUrl, cardUuid)
                         val updatePrescriptionsListFunc = {
                             activityViewModel.updateLocalPrescriptionsListFor(apiUrl, cardUuid)
                         }
                         val goToPrescriptionFunc = { id: Long ->
-                            navController.navigate(String.format("prescription/%d", id))
+                            navController.navigate(String.format("prescription/%s/%d", encodedUrl, id))
                         }
                         PrescriptionsUI(
                             prescriptions,

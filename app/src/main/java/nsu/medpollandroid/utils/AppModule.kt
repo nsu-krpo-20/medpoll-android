@@ -2,6 +2,7 @@ package nsu.medpollandroid.utils
 
 import android.content.Context
 import androidx.room.Room
+import androidx.work.WorkManager
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -14,6 +15,10 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object AppModule {
+    @Singleton
+    @Provides
+    fun provideWorkManager(@ApplicationContext app: Context) = WorkManager.getInstance(app)
+
     @Singleton
     @Provides
     fun provideCardsDatabase(@ApplicationContext app: Context) = Room.databaseBuilder(
