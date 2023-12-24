@@ -20,7 +20,7 @@ data class MedicineFromResponse(
     val name: String,
     val dose: String,
     val periodType: Long,
-    var period: String
+    val period: String
 )
 
 data class MetricFromResponse(
