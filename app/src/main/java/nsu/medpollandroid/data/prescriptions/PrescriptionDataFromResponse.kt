@@ -48,12 +48,12 @@ fun MedicineFromResponse.toDbEntity(prescriptionId: Long): MedicineEntity {
     )
 }
 
-fun PrescriptionDataFromResponse.toDbEntity(): PrescriptionWithMedsAndMetrics {
+fun PrescriptionDataFromResponse.toDbEntity(apiUrl: String): PrescriptionWithMedsAndMetrics {
     val medsDb = meds.map { it.toDbEntity(id) }
     val metricsDb = metrics.map { it.toDbEntity(id) }
     val actualDoctorNameToPut = doctorFullName ?: "Пирогов Николай Иванович" // See top data class def
     return PrescriptionWithMedsAndMetrics(
-        prescription = PrescriptionEntity(id, patientCardId, createdTime,
+        prescription = PrescriptionEntity(id, apiUrl, patientCardId, createdTime,
             editedTime, actualDoctorNameToPut, isActive),
         meds = medsDb,
         metrics = metricsDb

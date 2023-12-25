@@ -12,7 +12,9 @@ class SamplePrescriptionInfoPreviewProvider: PreviewParameterProvider<Prescripti
     override val values: Sequence<PrescriptionInfoData>
         get() = sequenceOf(
             PrescriptionInfoData(
-                creationTimestamp = 1_697_356_800,
+                id = 0,
+                isActive = true,
+                creationTimestamp = 1_697_356_800000,
                 doctorFullName = "Пирогов Николай Иванович",
                 medicines = listOf(
                     Medicine(

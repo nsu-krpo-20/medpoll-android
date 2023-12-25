@@ -80,7 +80,7 @@ class DataRepository @Inject constructor(
                 continue
             }
             prescriptionsDatabase.prescriptionsDao().insertAllPrescriptionData(
-                prescriptionsAllInfo.toDbEntity()
+                prescriptionsAllInfo.toDbEntity(apiUrl)
             )
         }
     }
@@ -109,11 +109,11 @@ class DataRepository @Inject constructor(
     }
 
     override fun getPrescriptionsList(apiUrl: String, cardUuid: String): Flow<List<PrescriptionEntity>> {
-        return prescriptionsDatabase.prescriptionsDao().getPrescriptionsGeneralInfo()
+        return prescriptionsDatabase.prescriptionsDao().getPrescriptionsGeneralInfo(apiUrl)
     }
 
-    override fun getPrescription(id: Long): Flow<PrescriptionInfoData> {
-        return prescriptionsDatabase.prescriptionsDao().getPrescriptionAllInfo(id)
+    override fun getPrescription(apiUrl: String, id: Long): Flow<PrescriptionInfoData> {
+        return prescriptionsDatabase.prescriptionsDao().getPrescriptionAllInfo(apiUrl, id)
             .map { it.transformToNormal() }
     }
 }

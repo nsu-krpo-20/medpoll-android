@@ -1,5 +1,6 @@
 package nsu.medpollandroid
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
@@ -13,9 +14,11 @@ import nsu.medpollandroid.data.cards.Card
 import nsu.medpollandroid.data.prescriptions.PrescriptionInfoData
 import nsu.medpollandroid.data.prescriptions.db.PrescriptionEntity
 import nsu.medpollandroid.repositories.IRepositories
+import nsu.medpollandroid.utils.MedpollNotificationsManager
 
 class ActivityViewModel(
-    private val repositories: IRepositories
+    private val repositories: IRepositories,
+    private val medpollNotificationsManager: MedpollNotificationsManager
 ) : ViewModel() {
     private val cardsListMutableStateFlow = MutableStateFlow(emptyList<Card>())
 
@@ -50,6 +53,9 @@ class ActivityViewModel(
                 repositories.prescriptionRepository.getPrescriptionsList(apiUrl, cardUuid)
                     .collect { prescriptionsList ->
                         prescriptionsInfoListMutableStateFlow.value = prescriptionsList
+                        for (prescription in prescriptionsList) {
+                            medpollNotificationsManager.scheduleNotificationIfNecessary(apiUrl, prescription.id)
+                        }
                     }
             }
         }
@@ -64,15 +70,17 @@ class ActivityViewModel(
     val prescriptionStateFlow: StateFlow<PrescriptionInfoData?> = prescriptionMutableStateFlow
 
     private var prescriptionId: Long? = null
+    private var curUrl: String? = null
     private var curPrescriptionWatchJob: Job? = null
 
-    fun readPrescriptionFor(id: Long) {
-        if (prescriptionId != id) {
+    fun readPrescriptionFor(apiUrl: String, id: Long) {
+        if ((prescriptionId != id) || (curUrl != apiUrl)) {
             prescriptionMutableStateFlow.value = null
             prescriptionId = id
+            curUrl = apiUrl
             curPrescriptionWatchJob?.cancel()
             curPrescriptionWatchJob = viewModelScope.launch {
-                repositories.prescriptionRepository.getPrescription(id)
+                repositories.prescriptionRepository.getPrescription(apiUrl, id)
                     .collect { prescriptionInfo ->
                         prescriptionMutableStateFlow.value = prescriptionInfo
                     }
@@ -89,7 +97,8 @@ class ActivityViewModel(
             ): T {
                 val application = checkNotNull(extras[APPLICATION_KEY])
                 return ActivityViewModel (
-                    (application as MedpollApplication).repositories
+                    (application as MedpollApplication).repositories,
+                    (application as MedpollApplication).medpollNotificationsManager
                 ) as T
             }
         }
