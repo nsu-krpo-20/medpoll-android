@@ -8,16 +8,16 @@ import nsu.medpollandroid.ui.previewproviders.SampleCardsPreviewProvider
 import javax.inject.Inject
 
 class MockCardRepository @Inject constructor(): ICardRepository  {
-    override fun getAll(): Flow<List<Card>> {
+    override fun getAllCardsFlow(): Flow<List<Card>> {
         return SampleCardsPreviewProvider()
             .values
             .map { s -> s.value }
             .asFlow()
     }
 
-    override fun delete(card: Card) {
+    override fun deleteCard(card: Card) {
     }
 
-    override fun insert(card: Card) {
+    override fun insertCard(card: Card) {
     }
 }

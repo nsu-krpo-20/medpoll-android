@@ -1,63 +1,81 @@
 package nsu.medpollandroid
 
-import android.util.Log
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.State
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
 import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.CreationExtras
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import nsu.medpollandroid.data.PrescriptionGeneralInfo
 import nsu.medpollandroid.data.cards.Card
-import nsu.medpollandroid.repositories.DataRepository
+import nsu.medpollandroid.data.prescriptions.PrescriptionInfoData
+import nsu.medpollandroid.data.prescriptions.db.PrescriptionEntity
 import nsu.medpollandroid.repositories.IRepositories
-import nsu.medpollandroid.repositories.Repositories
 
 class ActivityViewModel(
     private val repositories: IRepositories
 ) : ViewModel() {
-    private val listMutableStateFlow = MutableStateFlow(emptyList<Card>())
+    private val cardsListMutableStateFlow = MutableStateFlow(emptyList<Card>())
 
-    val listStateFlow: StateFlow<List<Card>> = listMutableStateFlow
+    val cardsListStateFlow: StateFlow<List<Card>> = cardsListMutableStateFlow
 
     init {
         viewModelScope.launch {
-            repositories.cardRepository.getAll()
+            repositories.prescriptionRepository.updateLocalPrescriptions()
+            repositories.cardRepository.getAllCardsFlow()
                 .collect { cardsList ->
-                    listMutableStateFlow.value = cardsList
+                    cardsListMutableStateFlow.value = cardsList
                 }
         }
     }
 
-    private val prescriptionsInfoListMutableState: MutableState<List<PrescriptionGeneralInfo>> =
-        mutableStateOf(emptyList())
+    private val prescriptionsInfoListMutableStateFlow = MutableStateFlow(emptyList<PrescriptionEntity>())
 
-    val prescriptionsInfoListState: State<List<PrescriptionGeneralInfo>> =
-        prescriptionsInfoListMutableState
+    val prescriptionsInfoListStateFlow: StateFlow<List<PrescriptionEntity>> =
+        prescriptionsInfoListMutableStateFlow
 
     private var apiUrl: String? = null
     private var cardUuid: String? = null
+    private var curPrescriptionsWatchJob: Job? = null
 
-    fun updatePrescriptionsListFor(apiUrl: String, cardUuid: String, failure: MutableState<Boolean>) {
+    fun readLocalPrescriptionsListFor(apiUrl: String, cardUuid: String) {
         if ((this.apiUrl != apiUrl) || (this.cardUuid != cardUuid)) {
-            prescriptionsInfoListMutableState.value = emptyList()
+            prescriptionsInfoListMutableStateFlow.value = emptyList()
             this.apiUrl = apiUrl
             this.cardUuid = cardUuid
-        }
-        viewModelScope.launch {
-            val requestResult =
-                repositories.prescriptionRepository.getPrescriptions(apiUrl, cardUuid)
-            if (requestResult != null) {
-                prescriptionsInfoListMutableState.value = requestResult
+            curPrescriptionsWatchJob?.cancel()
+            curPrescriptionsWatchJob = viewModelScope.launch {
+                repositories.prescriptionRepository.getPrescriptionsList(apiUrl, cardUuid)
+                    .collect { prescriptionsList ->
+                        prescriptionsInfoListMutableStateFlow.value = prescriptionsList
+                    }
             }
-            else {
-                Log.e("NET", "Updating prescriptions list failed")
-                failure.value = true
+        }
+    }
+
+    fun updateLocalPrescriptionsListFor(apiUrl: String, cardUuid: String) {
+        repositories.prescriptionRepository.updateLocalPrescriptions(apiUrl, cardUuid)
+    }
+
+    private val prescriptionMutableStateFlow = MutableStateFlow<PrescriptionInfoData?>(null)
+
+    val prescriptionStateFlow: StateFlow<PrescriptionInfoData?> = prescriptionMutableStateFlow
+
+    private var prescriptionId: Long? = null
+    private var curPrescriptionWatchJob: Job? = null
+
+    fun readPrescriptionFor(id: Long) {
+        if (prescriptionId != id) {
+            prescriptionMutableStateFlow.value = null
+            prescriptionId = id
+            curPrescriptionWatchJob?.cancel()
+            curPrescriptionWatchJob = viewModelScope.launch {
+                repositories.prescriptionRepository.getPrescription(id)
+                    .collect { prescriptionInfo ->
+                        prescriptionMutableStateFlow.value = prescriptionInfo
+                    }
             }
         }
     }

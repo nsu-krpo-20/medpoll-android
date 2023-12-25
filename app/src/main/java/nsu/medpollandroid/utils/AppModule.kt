@@ -8,6 +8,7 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import nsu.medpollandroid.data.cards.CardsDatabase
+import nsu.medpollandroid.data.prescriptions.db.PrescriptionsDatabase
 import javax.inject.Singleton
 
 @Module
@@ -15,7 +16,7 @@ import javax.inject.Singleton
 object AppModule {
     @Singleton
     @Provides
-    fun provideDatabase(@ApplicationContext app: Context) = Room.databaseBuilder(
+    fun provideCardsDatabase(@ApplicationContext app: Context) = Room.databaseBuilder(
         app,
         CardsDatabase::class.java,
         name = "cards_db"
@@ -23,5 +24,17 @@ object AppModule {
 
     @Singleton
     @Provides
-    fun provideDao(db: CardsDatabase) = db.cardDao()
+    fun providePrescriptionsDatabase(@ApplicationContext app: Context) = Room.databaseBuilder(
+        app,
+        PrescriptionsDatabase::class.java,
+        name = "prescriptions_db"
+    ).build()
+
+    @Singleton
+    @Provides
+    fun provideCardsDao(db: CardsDatabase) = db.cardDao()
+
+    @Singleton
+    @Provides
+    fun providePrescriptionsDao(db: PrescriptionsDatabase) = db.prescriptionsDao()
 }

@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
 import androidx.compose.material.ExtendedFloatingActionButton
 import androidx.compose.material.FabPosition
@@ -16,7 +16,6 @@ import androidx.compose.material.Scaffold
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -24,27 +23,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
-import androidx.navigation.navArgument
-import nsu.medpollandroid.MainActivity
 import nsu.medpollandroid.R
-import nsu.medpollandroid.data.PrescriptionGeneralInfo
+import nsu.medpollandroid.data.prescriptions.db.PrescriptionEntity
 import nsu.medpollandroid.ui.previewproviders.SamplePrescriptionsPreviewProvider
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PrescriptionsUI(
-        @PreviewParameter(SamplePrescriptionsPreviewProvider::class)
-                prescriptions: State<List<PrescriptionGeneralInfo>>,
-        //The only reason for navController's nullability is Studio's preview
-        navController: NavController? = null,
-        //Same about updatePrescriptionsProvider;
-        /*
-        Btw, Studio's previews way of work is making me sure it is better
-        to remove all @Preview stuff for 'production'
-        */
-        updatePrescriptionsListProvider: MainActivity.UpdatePrescriptionsListProvider? = null) {
+    @PreviewParameter(SamplePrescriptionsPreviewProvider::class)
+                prescriptions: State<List<PrescriptionEntity>>,
+    goToPrescription: (id: Long) -> Unit = { _ ->  },
+    updatePrescriptionsList: () -> Unit = { }) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         topBar = {
@@ -60,7 +51,7 @@ fun PrescriptionsUI(
                     Text(stringResource(id = R.string.update_prescriptions_button_text))
                 },
                 onClick = {
-                    updatePrescriptionsListProvider?.updatePrescriptionsList()
+                    updatePrescriptionsList()
                 },
                 icon = {
                     Icon(
@@ -73,29 +64,29 @@ fun PrescriptionsUI(
         floatingActionButtonPosition = FabPosition.End,
         backgroundColor = MaterialTheme.colors.background
     ) {
-        Column(
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(1.dp),
             modifier = Modifier
                 .padding(it)
-                .verticalScroll(rememberScrollState())
                 .fillMaxWidth() // In order to make list always scrollable by right finger
         ) {
-            prescriptions.value.forEach { prescription ->
-                SinglePrescriptionUIElem(prescription, navController)
+            items(prescriptions.value) { prescription ->
+                SinglePrescriptionUIElem(prescription, goToPrescription)
             }
         }
     }
 }
 
 @Composable
-private fun SinglePrescriptionUIElem(prescription: PrescriptionGeneralInfo,
-                                     navController: NavController?) {
+private fun SinglePrescriptionUIElem(prescription: PrescriptionEntity,
+                                     goToPrescription: (id: Long) -> Unit = { _ ->  }) {
     /*
     Do we need separate buttons for showing full information about prescription
     and filling a report or not?
     */
     Button(
         onClick = {
-            navController?.navigate(String.format("prescription/%d", prescription.id))
+            goToPrescription(prescription.id)
         },
         modifier = Modifier
             .fillMaxWidth(),
@@ -113,7 +104,7 @@ private fun SinglePrescriptionUIElem(prescription: PrescriptionGeneralInfo,
             )
             Text(
                 text = String.format(stringResource(R.string.prescription_time_format),
-                                    prescription.createdTime * 1000
+                                    prescription.createdTime
                 ),
                 fontSize = 20.sp
             )
@@ -125,7 +116,7 @@ private fun SinglePrescriptionUIElem(prescription: PrescriptionGeneralInfo,
             if (prescription.createdTime != prescription.editedTime) {
                 Text(
                     text = String.format(stringResource(R.string.prescription_last_modified_format),
-                        prescription.editedTime * 1000),
+                        prescription.editedTime),
                     fontSize = 12.sp
                 )
             }

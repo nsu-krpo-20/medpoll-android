@@ -28,34 +28,31 @@ import androidx.compose.material.Surface
 import androidx.compose.material.Text
 import androidx.compose.material.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.graphics.Shape
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import nsu.medpollandroid.MedpollApplication
 import nsu.medpollandroid.R
+import nsu.medpollandroid.data.prescriptions.Medicine
+import nsu.medpollandroid.data.prescriptions.Metric
+import nsu.medpollandroid.data.prescriptions.PrescriptionInfoData
+import nsu.medpollandroid.data.prescriptions.PrescriptionPeriod
 import nsu.medpollandroid.ui.previewproviders.SamplePrescriptionInfoPreviewProvider
 import nsu.medpollandroid.ui.theme.HospitalRed
-import nsu.medpollandroid.ui_data.Medicine
-import nsu.medpollandroid.ui_data.Metric
-import nsu.medpollandroid.ui_data.PrescriptionInfoData
-import nsu.medpollandroid.ui_data.PrescriptionPeriod
+import nsu.medpollandroid.utils.daysString
 import nsu.medpollandroid.utils.format
 import nsu.medpollandroid.utils.leftZeroPad
-import nsu.medpollandroid.utils.daysString
 import java.util.Calendar
 import java.util.Date
 
@@ -232,6 +229,7 @@ fun ExpandingColumn(
     }
 }
 
+/*
 @Composable
 fun PrescriptionInfo(id: Long) {
     val application = LocalContext.current.applicationContext as MedpollApplication
@@ -248,12 +246,15 @@ fun PrescriptionInfo(id: Long) {
     if (data == null) return
     PrescriptionInfo(data!!)
 }
+*/
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun PrescriptionInfo(
-    @PreviewParameter(SamplePrescriptionInfoPreviewProvider::class) data: PrescriptionInfoData
+    @PreviewParameter(SamplePrescriptionInfoPreviewProvider::class)
+        prescriptionState: State<PrescriptionInfoData?>
 ) {
+    val data = prescriptionState.value
     Surface(
         modifier = Modifier.fillMaxSize()
     ) {
@@ -273,6 +274,7 @@ fun PrescriptionInfo(
                     .padding(10.dp)
                     .fillMaxWidth(),
             ) {
+                if (data == null) return@Column
                 PrimaryRow {
                     SecondaryText(text = stringResource(R.string.created), horizontalPadding = 8.dp)
                     val date = Date(data.creationTimestamp)
@@ -280,9 +282,9 @@ fun PrescriptionInfo(
                     calendar.time = date
                     Row {
                         SecondaryText(
-                            text = (calendar.get(Calendar.MONTH) + 1).leftZeroPad(2) +
+                            text = (calendar.get(Calendar.DAY_OF_MONTH)).leftZeroPad(2) +
                                     " / " +
-                                    (calendar.get(Calendar.DAY_OF_MONTH)).leftZeroPad(2) +
+                                    (calendar.get(Calendar.MONTH) + 1).leftZeroPad(2) +
                                     " / " +
                                     (calendar.get(Calendar.YEAR)).toString().leftZeroPad(4),
                             horizontalPadding = 8.dp,

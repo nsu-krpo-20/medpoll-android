@@ -11,8 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material.AlertDialog
 import androidx.compose.material.Button
 import androidx.compose.material.ExtendedFloatingActionButton
@@ -28,6 +28,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.State
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -37,21 +38,18 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.navigation.NavController
 import nsu.medpollandroid.MedpollApplication
 import nsu.medpollandroid.R
 import nsu.medpollandroid.data.cards.Card
 import nsu.medpollandroid.qradding.QRAdder
-import nsu.medpollandroid.repositories.DataRepository
 import nsu.medpollandroid.ui.previewproviders.SampleCardsPreviewProvider
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
-fun CardsUI(@PreviewParameter(SampleCardsPreviewProvider::class) cards: MutableState<List<Card>>,
-            //The only reason for navController's nullability is Studio's preview
-            navController: NavController? = null) {
+fun CardsUI(@PreviewParameter(SampleCardsPreviewProvider::class) cards: State<List<Card>>,
+            goToPrescriptions: (apiUrl: String, cardUuid: String) -> Unit = { _, _ ->  }) {
     val context = LocalContext.current
     val openNameRequestDialog = remember { mutableStateOf(false) }
     val openErrorDialog = remember { mutableStateOf(false) }
@@ -95,21 +93,23 @@ fun CardsUI(@PreviewParameter(SampleCardsPreviewProvider::class) cards: MutableS
         floatingActionButtonPosition = FabPosition.End,
         backgroundColor = MaterialTheme.colors.background
     ) {
-        Column(
+        LazyColumn(
+            verticalArrangement = Arrangement.spacedBy(1.dp),
             modifier = Modifier
                 .padding(it)
-                .verticalScroll(rememberScrollState())
                 .fillMaxWidth() // In order to make list always scrollable by right finger
         ) {
-            cards.value.forEach { card ->
-                SingleCardUIElem(context, card, navController)
+            items(cards.value) { card ->
+                SingleCardUIElem(card, goToPrescriptions)
             }
         }
     }
 }
 
 @Composable
-private fun SingleCardUIElem(context: Context, card: Card, navController: NavController?) {
+private fun SingleCardUIElem(card: Card,
+                             goToPrescriptions: (apiUrl: String, cardUuid: String) -> Unit =
+                             { _, _ -> }) {
     val application = LocalContext.current.applicationContext as MedpollApplication
 
     Row (
@@ -119,13 +119,9 @@ private fun SingleCardUIElem(context: Context, card: Card, navController: NavCon
     ) {
         Button(
             onClick = {
-                if (navController != null) {
-                    val encodedUrl =
-                        URLEncoder.encode(card.apiUrl, StandardCharsets.UTF_8.toString())
-                    navController.navigate(
-                        String.format("prescriptions/%s/%s", encodedUrl, card.cardUuid)
-                    )
-                }
+                val encodedUrl =
+                    URLEncoder.encode(card.apiUrl, StandardCharsets.UTF_8.toString())
+                goToPrescriptions(encodedUrl, card.cardUuid)
             },
             modifier = Modifier
                 .weight(7f),
@@ -152,7 +148,7 @@ private fun SingleCardUIElem(context: Context, card: Card, navController: NavCon
         }
         Button(
             onClick = {
-                  application.repositories.cardRepository.delete(card)
+                  application.repositories.cardRepository.deleteCard(card)
             },
             modifier = Modifier
                 .background(MaterialTheme.colors.background)
