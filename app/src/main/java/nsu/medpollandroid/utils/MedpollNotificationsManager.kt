@@ -15,6 +15,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -31,12 +32,13 @@ import nsu.medpollandroid.repositories.IRepositories
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import kotlin.math.abs
 
-class MedpollNotificationsManager (
-    val context: Context,
+class MedpollNotificationsManager @Inject constructor(
+    @ApplicationContext val context: Context,
     val repositories: IRepositories,
-    private val workManager: WorkManager
+    val workManager: WorkManager
 ) {
     private fun getPrescriptionNotifyingJobName(prescriptionInfoData: PrescriptionInfoData): String {
         return (prescriptionInfoData.creationTimestamp.toString() + ".presc:"
