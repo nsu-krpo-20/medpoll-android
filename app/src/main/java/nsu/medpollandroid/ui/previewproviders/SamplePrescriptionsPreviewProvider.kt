@@ -10,19 +10,17 @@ class SamplePrescriptionsPreviewProvider : PreviewParameterProvider<MutableState
         get() = sequenceOf(mutableStateOf(listOf(
             PrescriptionEntity(
                 0,
-                "abc.ru",
                 1,
-                1697360400000,
-                1697360400000,
+                1697360400,
+                1697360400,
                 "Пирогов Николай Иванович",
                 true
             ),
             PrescriptionEntity(
                 1,
-                "bbc.ru",
                 1,
-                1697360400000,
-                1697367600000,
+                1697360400,
+                1697367600,
                 "Мешалкин Евгений Николаевич",
                 true
             )

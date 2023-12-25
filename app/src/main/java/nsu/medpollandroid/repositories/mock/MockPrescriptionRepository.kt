@@ -11,7 +11,7 @@ import nsu.medpollandroid.ui.previewproviders.SamplePrescriptionsPreviewProvider
 import javax.inject.Inject
 
 class MockPrescriptionRepository @Inject constructor(): IPrescriptionRepository {
-    override fun getPrescription(apiUrl: String, id: Long): Flow<PrescriptionInfoData> {
+    override fun getPrescription(id: Long): Flow<PrescriptionInfoData> {
         return SamplePrescriptionInfoPreviewProvider()
             .values
             .asFlow()

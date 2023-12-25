@@ -5,7 +5,7 @@ import nsu.medpollandroid.data.prescriptions.PrescriptionInfoData
 import nsu.medpollandroid.data.prescriptions.db.PrescriptionEntity
 
 interface IPrescriptionRepository {
-    fun getPrescription(apiUrl: String, id: Long): Flow<PrescriptionInfoData>
+    fun getPrescription(id: Long): Flow<PrescriptionInfoData>
 
     fun getPrescriptionsList(apiUrl: String, cardUuid: String): Flow<List<PrescriptionEntity>>
 

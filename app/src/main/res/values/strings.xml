@@ -30,7 +30,4 @@
     <string name="on_sundays">В воскресенье</string>
     <string name="on_weekday_at_the_time">%1$s в</string>
     <string name="each_day_at_the_time">Каждый день в</string>
-
-    <string name="channel_name">NotificationsChannel</string>
-    <string name="channel_description">NotificationsChannel for meds and metrics</string>
 </resources>

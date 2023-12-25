@@ -2,13 +2,11 @@ package nsu.medpollandroid.data.prescriptions.db
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
-import androidx.room.Index
+import androidx.room.PrimaryKey
 
-@Entity(tableName = "prescription", primaryKeys = ["id", "api_url"],
-    indices = [Index(value = ["id"], unique = true)])
+@Entity(tableName = "prescription")
 data class PrescriptionEntity (
-    val id: Long,
-    @ColumnInfo(name = "api_url") val apiUrl: String,
+    @PrimaryKey val id: Long,
     @ColumnInfo(name = "card_id") val patientCardId: Long,
     @ColumnInfo(name = "created_time") val createdTime: Long,
     @ColumnInfo(name = "edited_time") val editedTime: Long,

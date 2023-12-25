@@ -106,10 +106,6 @@ dependencies {
     val hiltVersion = "2.47"
     implementation("com.google.dagger:hilt-android:$hiltVersion")
     kapt("com.google.dagger:hilt-android-compiler:$hiltVersion")
-
-    val workVersion = "2.9.0"
-    implementation("androidx.work:work-runtime-ktx:$workVersion")
-
 }
 
 kapt {

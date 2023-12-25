@@ -10,12 +10,12 @@ import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface PrescriptionsDao {
-    @Query("select * from prescription where api_url == :apiUrl")
-    fun getPrescriptionsGeneralInfo(apiUrl: String): Flow<List<PrescriptionEntity>>
+    @Query("select * from prescription")
+    fun getPrescriptionsGeneralInfo(): Flow<List<PrescriptionEntity>>
 
     @Transaction
-    @Query("select * from prescription where id == :id and api_url == :apiUrl")
-    fun getPrescriptionAllInfo(apiUrl: String, id: Long): Flow<PrescriptionWithMedsAndMetrics>
+    @Query("select * from prescription where id == :id")
+    fun getPrescriptionAllInfo(id: Long): Flow<PrescriptionWithMedsAndMetrics>
 
     @Transaction
     fun insertAllPrescriptionData(prescriptionData: PrescriptionWithMedsAndMetrics) {

@@ -1,21 +1,30 @@
 package nsu.medpollandroid
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
+import androidx.lifecycle.repeatOnLifecycle
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import kotlinx.coroutines.launch
+import nsu.medpollandroid.data.cards.Card
+import nsu.medpollandroid.data.prescriptions.PrescriptionInfoData
+import nsu.medpollandroid.data.prescriptions.db.PrescriptionEntity
 import nsu.medpollandroid.ui.CardsUI
 import nsu.medpollandroid.ui.PrescriptionInfo
 import nsu.medpollandroid.ui.PrescriptionsUI
 import nsu.medpollandroid.ui.theme.MedpollTheme
-import java.net.URLEncoder
-import java.nio.charset.StandardCharsets
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -40,15 +49,13 @@ class MainActivity : ComponentActivity() {
                         CardsUI(cards, goToPrescriptionsFunc)
                     }
                     composable(
-                        "prescription/{apiUrl}/{id}",
+                        "prescription/{id}",
                         arguments = listOf(
-                            navArgument("apiUrl") { type = NavType.StringType },
                             navArgument("id") { type = NavType.LongType }
                         )
                     ) {backStackEntry ->
-                        val apiUrl = backStackEntry.arguments!!.getString("apiUrl")!!
                         val id = backStackEntry.arguments!!.getLong("id")
-                        activityViewModel.readPrescriptionFor(apiUrl, id)
+                        activityViewModel.readPrescriptionFor(id)
                         PrescriptionInfo(prescription)
                     }
                     composable(
@@ -60,15 +67,13 @@ class MainActivity : ComponentActivity() {
                     ) { backStackEntry ->
                         val apiUrl = backStackEntry.arguments!!.getString("apiUrl")!!
                         val cardUuid = backStackEntry.arguments!!.getString("cardUuid")!!
-                        val encodedUrl =
-                            URLEncoder.encode(apiUrl, StandardCharsets.UTF_8.toString())
-                        activityViewModel.updateLocalPrescriptionsListFor(apiUrl, cardUuid)
+
                         activityViewModel.readLocalPrescriptionsListFor(apiUrl, cardUuid)
                         val updatePrescriptionsListFunc = {
                             activityViewModel.updateLocalPrescriptionsListFor(apiUrl, cardUuid)
                         }
                         val goToPrescriptionFunc = { id: Long ->
-                            navController.navigate(String.format("prescription/%s/%d", encodedUrl, id))
+                            navController.navigate(String.format("prescription/%d", id))
                         }
                         PrescriptionsUI(
                             prescriptions,
