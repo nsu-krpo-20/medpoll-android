@@ -87,13 +87,18 @@ class MedpollNotificationsManager @Inject constructor(
     }
 
     private fun getTextFor(meds: List<Medicine>, metrics: List<Metric>): String {
-        val result: StringBuilder = StringBuilder("Принять медикаменты:\n")
-        for (med in meds) {
-            result.append(med.name + ", " + med.amount + "\n")
+        val result: StringBuilder = StringBuilder()
+        if (meds.isNotEmpty()) {
+            result.append("Принять медикаменты:\n")
+            for (med in meds) {
+                result.append(med.name + ", " + med.amount + "\n")
+            }
         }
-        result.append("Провести замеры:\n")
-        for (metric in metrics) {
-            result.append(metric.name + "\n")
+        if (metrics.isNotEmpty()) {
+            result.append("Провести замеры:\n")
+            for (metric in metrics) {
+                result.append(metric.name + "\n")
+            }
         }
         return result.toString()
     }
@@ -122,7 +127,7 @@ class MedpollNotificationsManager @Inject constructor(
             }
             val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
             val builder = NotificationCompat.Builder(context, MedpollApplication.CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.local_hospital_fill0_wght400_grad0_opsz24)
                 .setContentTitle("Medpoll: напоминание")
                 .setContentText("Есть напоминания о назначениях")
                 .setStyle(NotificationCompat.BigTextStyle()

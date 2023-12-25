@@ -18,6 +18,7 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoriesModule {
+    /*
     @Singleton
     @Mock
     @Provides
@@ -30,6 +31,7 @@ object RepositoriesModule {
             cardRepository
         )
     }
+    */
 
     @Singleton
     @Provides
