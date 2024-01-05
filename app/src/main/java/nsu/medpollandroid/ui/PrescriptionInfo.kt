@@ -39,8 +39,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import nsu.medpollandroid.R
+import nsu.medpollandroid.data.prescriptions.Custom
+import nsu.medpollandroid.data.prescriptions.EachNDays
 import nsu.medpollandroid.data.prescriptions.Medicine
 import nsu.medpollandroid.data.prescriptions.Metric
+import nsu.medpollandroid.data.prescriptions.NTimesDaily
+import nsu.medpollandroid.data.prescriptions.PerWeekday
 import nsu.medpollandroid.data.prescriptions.PrescriptionInfoData
 import nsu.medpollandroid.data.prescriptions.PrescriptionPeriod
 import nsu.medpollandroid.ui.previewproviders.SamplePrescriptionInfoPreviewProvider
@@ -52,14 +56,14 @@ import java.util.Calendar
 import java.util.Date
 
 @Composable
-fun PeriodInfo(period: PrescriptionPeriod.Custom) {
+fun PeriodInfo(period: Custom) {
     PrimaryRow(color = MaterialTheme.colors.secondary, topPadding = 0.dp) {
         SecondaryText(period.description, modifier = Modifier.fillMaxWidth(), color = HospitalRed)
     }
 }
 
 @Composable
-fun PeriodInfo(caption: String, period: PrescriptionPeriod.NTimesDaily) {
+fun PeriodInfo(caption: String, period: NTimesDaily) {
     PrimaryRow(color = Color.Transparent, horizontalArrangement = Arrangement.Center) {
         SecondaryText(caption, color = HospitalRed)
         Spacer(modifier = Modifier.width(8.dp))
@@ -82,7 +86,7 @@ fun PeriodInfo(period: PrescriptionPeriod.EachNDays) {
     }
 }
 @Composable
-fun PeriodInfo(period: PrescriptionPeriod.PerWeekday) {
+fun PeriodInfo(period: PerWeekday) {
     val weekdayNames: Array<String> = arrayOf(
         stringResource(R.string.on_mondays),
         stringResource(R.string.on_tuesdays),
@@ -104,10 +108,10 @@ fun PeriodInfo(period: PrescriptionPeriod.PerWeekday) {
 @Composable
 fun PeriodInfo(period: PrescriptionPeriod) {
     when (period) {
-        is PrescriptionPeriod.Custom -> PeriodInfo(period)
-        is PrescriptionPeriod.EachNDays -> PeriodInfo(period)
-        is PrescriptionPeriod.NTimesDaily -> PeriodInfo(stringResource(R.string.each_day_at_the_time), period)
-        is PrescriptionPeriod.PerWeekday -> PeriodInfo(period)
+        is Custom -> PeriodInfo(period)
+        is EachNDays -> PeriodInfo(period)
+        is NTimesDaily -> PeriodInfo(stringResource(R.string.each_day_at_the_time), period)
+        is PerWeekday -> PeriodInfo(period)
     }
 }
 @Composable

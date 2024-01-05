@@ -18,7 +18,9 @@ import javax.inject.Singleton
 @Module
 @InstallIn(SingletonComponent::class)
 object RepositoriesModule {
+    /*
     @Singleton
+    @Mock
     @Provides
     fun provideMockRepositories(
         prescriptionRepository: MockPrescriptionRepository,
@@ -29,25 +31,15 @@ object RepositoriesModule {
             cardRepository
         )
     }
+    */
 
     @Singleton
     @Provides
-    @Production
     fun provideRepositories(
         dataRepository: DataRepository
     ): IRepositories {
         return Repositories(
             dataRepository
         )
-    }
-
-    @Singleton
-    @Provides
-    @Production
-    fun provideNotificationManager(@ApplicationContext app: Context,
-                                   repositories: IRepositories,
-                                   workManager: WorkManager
-    ): MedpollNotificationsManager {
-        return MedpollNotificationsManager(app, repositories, workManager)
     }
 }

@@ -15,6 +15,7 @@ import androidx.work.OneTimeWorkRequestBuilder
 import androidx.work.WorkManager
 import androidx.work.Worker
 import androidx.work.WorkerParameters
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -31,122 +32,18 @@ import nsu.medpollandroid.repositories.IRepositories
 import java.util.Calendar
 import java.util.Date
 import java.util.concurrent.TimeUnit
+import javax.inject.Inject
 import kotlin.math.abs
 
-class MedpollNotificationsManager (
-    val context: Context,
+class MedpollNotificationsManager @Inject constructor(
+    @ApplicationContext val context: Context,
     val repositories: IRepositories,
-    private val workManager: WorkManager
+    val workManager: WorkManager
 ) {
     private fun getPrescriptionNotifyingJobName(prescriptionInfoData: PrescriptionInfoData): String {
         return (prescriptionInfoData.creationTimestamp.toString() + ".presc:"
                 + prescriptionInfoData.doctorFullName)
     }
-
-    private fun PrescriptionPeriod.NTimesDaily.nextFitsAfterMomentDelay(fromMillis: Long): Long {
-        val dateFrom = Date(fromMillis)
-        val calendarFrom = Calendar.getInstance()
-        calendarFrom.time = dateFrom
-        var minDistance = fromMillis
-        for (timeOfDay in timestamps) {
-            val curCalendar = Calendar.getInstance()
-            curCalendar.set(Calendar.YEAR, calendarFrom.get(Calendar.YEAR))
-            curCalendar.set(Calendar.MONTH, calendarFrom.get(Calendar.MONTH))
-            curCalendar.set(Calendar.DAY_OF_MONTH, calendarFrom.get(Calendar.DAY_OF_MONTH))
-            curCalendar.set(Calendar.HOUR, timeOfDay.hours)
-            curCalendar.set(Calendar.MINUTE, timeOfDay.minutes)
-            val curMillis = curCalendar.timeInMillis
-            if (curMillis > fromMillis) {
-                if (curMillis - fromMillis < minDistance) {
-                    minDistance = curMillis - fromMillis
-                }
-            }
-        }
-        return minDistance
-    }
-
-    private fun PrescriptionPeriod.EachNDays.nextFitsAfterMomentDelay(fromMillis: Long,
-                                                                      createdTime: Long): Long {
-        val intPeriodsBetween = abs(fromMillis - createdTime) / (1000 * 60 * 60 * 24 * period)
-        val possiblePointAfter = (((createdTime / 1000 * 60 * 60 * 24) * 1000 * 60 * 60 * 24)
-                                    + (intPeriodsBetween + 1) * 1000 * 60 * 60 * 24 * period
-                                        + timestamp.hours * 60 * 60 * 1000 + timestamp.minutes * 60 * 1000)
-        var minDistance = fromMillis
-        if (possiblePointAfter > fromMillis) {
-            if (possiblePointAfter - fromMillis < minDistance) {
-                minDistance = possiblePointAfter - fromMillis
-            }
-        }
-        return minDistance
-    }
-
-    private fun nextFitsAfterMomentForDayOfWeekFromDelay(timestamps: List<TimeOfDay>,
-                                                        fromMillis: Long, dayOfWeek: Int): Long {
-        val dateFrom = Date(fromMillis)
-        val calendarFrom = Calendar.getInstance()
-        calendarFrom.time = dateFrom
-        var minDistance = fromMillis
-        for (timeOfDay in timestamps) {
-            val curCalendar = Calendar.getInstance()
-            curCalendar.set(Calendar.YEAR, calendarFrom.get(Calendar.YEAR))
-            curCalendar.set(Calendar.MONTH, calendarFrom.get(Calendar.MONTH))
-            curCalendar.set(Calendar.DAY_OF_MONTH, calendarFrom.get(Calendar.DAY_OF_MONTH))
-            curCalendar.set(Calendar.DAY_OF_WEEK, dayOfWeek)
-            curCalendar.set(Calendar.HOUR, timeOfDay.hours)
-            curCalendar.set(Calendar.MINUTE, timeOfDay.minutes)
-            val curMillis = curCalendar.timeInMillis
-            if (curMillis > fromMillis) {
-                if (curMillis - fromMillis < minDistance) {
-                    minDistance = curMillis - fromMillis
-                }
-            }
-        }
-        return minDistance
-    }
-
-    private fun PrescriptionPeriod.PerWeekday.nextFitsAfterMomentDelay(fromMillis: Long): Long {
-        val daysOfWeek = arrayOf(Calendar.MONDAY, Calendar.TUESDAY,
-            Calendar.WEDNESDAY, Calendar.THURSDAY, Calendar.FRIDAY,
-            Calendar.SATURDAY, Calendar.SUNDAY)
-        var minDelay = fromMillis
-        for (day in weekdays) {
-            if (day == null) {
-                continue
-            }
-            if (nextFitsAfterMomentForDayOfWeekFromDelay(day.timestamps, fromMillis,
-                    daysOfWeek[weekdays.indexOf(day)]) < minDelay) {
-                minDelay = nextFitsAfterMomentForDayOfWeekFromDelay(day.timestamps, fromMillis,
-                    daysOfWeek[weekdays.indexOf(day)])
-            }
-        }
-        return minDelay
-    }
-
-    private fun PrescriptionPeriod.nextFitsAfterMomentDelay(fromMillis: Long,
-                                                            createdTime: Long): Long {
-        when(this) {
-            is PrescriptionPeriod.NTimesDaily -> {
-                return (this as PrescriptionPeriod.NTimesDaily).nextFitsAfterMomentDelay(
-                    fromMillis
-                )
-            }
-            is PrescriptionPeriod.EachNDays -> {
-                return (this as PrescriptionPeriod.EachNDays).nextFitsAfterMomentDelay(
-                    fromMillis,
-                    createdTime
-                )
-            }
-            is PrescriptionPeriod.PerWeekday -> {
-                return (this as PrescriptionPeriod.PerWeekday).nextFitsAfterMomentDelay(
-                    fromMillis
-                )
-            }
-            else -> {
-                return fromMillis
-            }
-        }
-    }
-
     private fun calculateMinimumDelayToNextNotification(prescriptionInfoData: PrescriptionInfoData,
                                                         curTime: Long): Long {
         var minDelay = curTime
@@ -167,105 +64,6 @@ class MedpollNotificationsManager (
         return minDelay
     }
 
-    private fun PrescriptionPeriod.NTimesDaily.isWithinLengthFrom(fromMillis: Long, distance: Long): Boolean {
-        val dateFrom = Date(fromMillis)
-        val calendarFrom = Calendar.getInstance()
-        calendarFrom.time = dateFrom
-        for (timeOfDay in timestamps) {
-            val curCalendar = Calendar.getInstance()
-            curCalendar.set(Calendar.YEAR, calendarFrom.get(Calendar.YEAR))
-            curCalendar.set(Calendar.MONTH, calendarFrom.get(Calendar.MONTH))
-            curCalendar.set(Calendar.DAY_OF_MONTH, calendarFrom.get(Calendar.DAY_OF_MONTH))
-            curCalendar.set(Calendar.HOUR, timeOfDay.hours)
-            curCalendar.set(Calendar.MINUTE, timeOfDay.minutes)
-            val curMillis = curCalendar.timeInMillis
-            if (abs(curMillis - fromMillis) <= distance) {
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun PrescriptionPeriod.EachNDays.isWithinLengthFrom(fromMillis: Long,
-                                                                distance: Long,
-                                                                createdTime: Long): Boolean {
-        val intPeriodsBetween = abs(fromMillis - createdTime) / (1000 * 60 * 60 * 24 * period)
-        val possiblePointBefore = ((createdTime / 1000 * 60 * 60 * 24) * 1000 * 60 * 60 * 24)
-                                    + intPeriodsBetween * 1000 * 60 * 60 * 24 * period
-                                        + timestamp.hours * 60 * 60 * 1000 + timestamp.minutes * 60 * 1000
-        val possiblePointAfter = ((createdTime / 1000 * 60 * 60 * 24) * 1000 * 60 * 60 * 24)
-                                    + (intPeriodsBetween + 1) * 1000 * 60 * 60 * 24 * period
-                                        + timestamp.hours * 60 * 60 * 1000 + timestamp.minutes * 60 * 1000
-        if ((abs(fromMillis - possiblePointBefore) <= distance) || (abs(fromMillis - possiblePointAfter) <= distance)) {
-            return true
-        }
-        return false
-    }
-
-    private fun isWithinLengthForDayOfWeekFrom(timestamps: List<TimeOfDay>,
-                                               fromMillis: Long, distance: Long, dayOfWeek: Int): Boolean {
-        val dateFrom = Date(fromMillis)
-        val calendarFrom = Calendar.getInstance()
-        calendarFrom.time = dateFrom
-        for (timeOfDay in timestamps) {
-            val curCalendar = Calendar.getInstance()
-            curCalendar.set(Calendar.YEAR, calendarFrom.get(Calendar.YEAR))
-            curCalendar.set(Calendar.MONTH, calendarFrom.get(Calendar.MONTH))
-            curCalendar.set(Calendar.DAY_OF_MONTH, calendarFrom.get(Calendar.DAY_OF_MONTH))
-            curCalendar.set(Calendar.DAY_OF_WEEK, dayOfWeek)
-            curCalendar.set(Calendar.HOUR, timeOfDay.hours)
-            curCalendar.set(Calendar.MINUTE, timeOfDay.minutes)
-            val curMillis = curCalendar.timeInMillis
-            Log.d("Notifs", "abs(curMillis - fromMillis) == " + abs(curMillis - fromMillis))
-            Log.d("Notifs", "distance is " + distance)
-            if (abs(curMillis - fromMillis) <= distance) {
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun PrescriptionPeriod.PerWeekday.isWithinLengthFrom(fromMillis: Long, distance: Long): Boolean {
-        val daysOfWeek = arrayOf(Calendar.MONDAY, Calendar.TUESDAY,
-            Calendar.WEDNESDAY, Calendar.THURSDAY, Calendar.FRIDAY,
-            Calendar.SATURDAY, Calendar.SUNDAY)
-        for (day in weekdays) {
-            if (day == null) {
-                continue
-            }
-            if (isWithinLengthForDayOfWeekFrom(day.timestamps, fromMillis, distance, daysOfWeek[weekdays.indexOf(day)])) {
-                return true
-            }
-        }
-        return false
-    }
-
-    private fun PrescriptionPeriod.isWithinLengthFrom(fromMillis: Long, distance: Long, createdTime: Long): Boolean {
-        when(this) {
-            is PrescriptionPeriod.NTimesDaily -> {
-                return (this as PrescriptionPeriod.NTimesDaily).isWithinLengthFrom(
-                    fromMillis,
-                    distance
-                )
-            }
-            is PrescriptionPeriod.EachNDays -> {
-                return (this as PrescriptionPeriod.EachNDays).isWithinLengthFrom(
-                    fromMillis,
-                    distance,
-                    createdTime
-                )
-            }
-            is PrescriptionPeriod.PerWeekday -> {
-                return (this as PrescriptionPeriod.PerWeekday).isWithinLengthFrom(
-                    fromMillis,
-                    distance
-                )
-            }
-            else -> {
-                return false // We have nothing to do with 'CUSTOM'
-            }
-        }
-    }
     private fun chooseMedsToNotify(prescriptionInfoData: PrescriptionInfoData, from: Long): List<Medicine> {
         val result = mutableListOf<Medicine>()
         for (med in prescriptionInfoData.medicines) {
@@ -289,13 +87,18 @@ class MedpollNotificationsManager (
     }
 
     private fun getTextFor(meds: List<Medicine>, metrics: List<Metric>): String {
-        val result: StringBuilder = StringBuilder("Принять медикаменты:\n")
-        for (med in meds) {
-            result.append(med.name + ", " + med.amount + "\n")
+        val result: StringBuilder = StringBuilder()
+        if (meds.isNotEmpty()) {
+            result.append("Принять медикаменты:\n")
+            for (med in meds) {
+                result.append(med.name + ", " + med.amount + "\n")
+            }
         }
-        result.append("Провести замеры:\n")
-        for (metric in metrics) {
-            result.append(metric.name + "\n")
+        if (metrics.isNotEmpty()) {
+            result.append("Провести замеры:\n")
+            for (metric in metrics) {
+                result.append(metric.name + "\n")
+            }
         }
         return result.toString()
     }
@@ -324,7 +127,7 @@ class MedpollNotificationsManager (
             }
             val pendingIntent = PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
             val builder = NotificationCompat.Builder(context, MedpollApplication.CHANNEL_ID)
-                .setSmallIcon(R.drawable.ic_launcher_foreground)
+                .setSmallIcon(R.drawable.local_hospital_fill0_wght400_grad0_opsz24)
                 .setContentTitle("Medpoll: напоминание")
                 .setContentText("Есть напоминания о назначениях")
                 .setStyle(NotificationCompat.BigTextStyle()

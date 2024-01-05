@@ -47,7 +47,6 @@ class DataRepository @Inject constructor(
             .build()
             .create(MedpollApi::class.java)
         val listResponse = api.getPrescriptionsByCard(cardUuid)
-        Log.d("Request", "GOT: " + listResponse)
         Log.d("Request", "GOT: " + listResponse + ", body: " + listResponse.body())
         if (!listResponse.isSuccessful) {
             Log.w("NET",
@@ -63,7 +62,6 @@ class DataRepository @Inject constructor(
         }
         for (prescriptionGeneralInfo in prescriptionsGeneralInfoList) {
             val allInfoResponse = api.getPrescriptionAllInfo(prescriptionGeneralInfo.id, cardUuid)
-            Log.d("Request", "GOT: " + allInfoResponse)
             Log.d("Request", "GOT: " + allInfoResponse + ", body: " + allInfoResponse.body())
             if (!allInfoResponse.isSuccessful) {
                 Log.w("NET",

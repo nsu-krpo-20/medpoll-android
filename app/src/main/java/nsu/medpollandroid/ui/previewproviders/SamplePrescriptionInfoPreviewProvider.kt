@@ -1,8 +1,12 @@
 package nsu.medpollandroid.ui.previewproviders
 
 import androidx.compose.ui.tooling.preview.PreviewParameterProvider
+import nsu.medpollandroid.data.prescriptions.Custom
+import nsu.medpollandroid.data.prescriptions.EachNDays
 import nsu.medpollandroid.data.prescriptions.Medicine
 import nsu.medpollandroid.data.prescriptions.Metric
+import nsu.medpollandroid.data.prescriptions.NTimesDaily
+import nsu.medpollandroid.data.prescriptions.PerWeekday
 import nsu.medpollandroid.data.prescriptions.PrescriptionInfoData
 import nsu.medpollandroid.data.prescriptions.PrescriptionPeriod
 import nsu.medpollandroid.data.prescriptions.TimeOfDay
@@ -21,7 +25,7 @@ class SamplePrescriptionInfoPreviewProvider: PreviewParameterProvider<Prescripti
                         id = 0,
                         name = "Захрапин",
                         amount = "200 мг",
-                        period = PrescriptionPeriod.NTimesDaily(
+                        period = NTimesDaily(
                             listOf(
                                 TimeOfDay(8, 0),
                                 TimeOfDay(21, 0)
@@ -32,7 +36,7 @@ class SamplePrescriptionInfoPreviewProvider: PreviewParameterProvider<Prescripti
                         id = 1,
                         name = "Захрапин",
                         amount = "200 мг",
-                        period = PrescriptionPeriod.EachNDays(
+                        period = EachNDays(
                             period = 2,
                             timestamp = TimeOfDay(8, 0)
                         )
@@ -41,15 +45,15 @@ class SamplePrescriptionInfoPreviewProvider: PreviewParameterProvider<Prescripti
                         id = 2,
                         name = "Захрапин",
                         amount = "200 мг",
-                        period = PrescriptionPeriod.PerWeekday(
+                        period = PerWeekday(
                             listOfWeekdays(
-                                monday = PrescriptionPeriod.NTimesDaily(
+                                monday = NTimesDaily(
                                     listOf(
                                         TimeOfDay(8, 0),
                                         TimeOfDay(21, 0)
                                     )
                                 ),
-                                friday = PrescriptionPeriod.NTimesDaily(
+                                friday = NTimesDaily(
                                     listOf(
                                         TimeOfDay(11, 0),
                                         TimeOfDay(21, 0)
@@ -62,14 +66,14 @@ class SamplePrescriptionInfoPreviewProvider: PreviewParameterProvider<Prescripti
                         id = 3,
                         name = "Захрапин",
                         amount = "200 мг",
-                        period = PrescriptionPeriod.Custom(description = "Когда захотите")
+                        period = Custom(description = "Когда захотите")
                     )
                 ),
                 metrics = listOf(
                     Metric(
                         id = 0,
                         name = "Давление",
-                        period = PrescriptionPeriod.NTimesDaily(
+                        period = NTimesDaily(
                             listOf(
                                 TimeOfDay(8, 0),
                                 TimeOfDay(21, 0)
@@ -79,7 +83,7 @@ class SamplePrescriptionInfoPreviewProvider: PreviewParameterProvider<Prescripti
                     Metric(
                         id = 1,
                         name = "Давление",
-                        period = PrescriptionPeriod.EachNDays(
+                        period = EachNDays(
                             period = 2,
                             timestamp = TimeOfDay(8, 0)
                         )
@@ -87,15 +91,15 @@ class SamplePrescriptionInfoPreviewProvider: PreviewParameterProvider<Prescripti
                     Metric(
                         id = 2,
                         name = "Давление",
-                        period = PrescriptionPeriod.PerWeekday(
+                        period = PerWeekday(
                             listOfWeekdays(
-                                monday = PrescriptionPeriod.NTimesDaily(
+                                monday = NTimesDaily(
                                     listOf(
                                         TimeOfDay(8, 0),
                                         TimeOfDay(21, 0)
                                     )
                                 ),
-                                friday = PrescriptionPeriod.NTimesDaily(
+                                friday = NTimesDaily(
                                     listOf(
                                         TimeOfDay(11, 0),
                                         TimeOfDay(21, 0)
@@ -107,7 +111,7 @@ class SamplePrescriptionInfoPreviewProvider: PreviewParameterProvider<Prescripti
                     Metric(
                         id = 3,
                         name = "Давление",
-                        period = PrescriptionPeriod.Custom(description = "Когда захотите")
+                        period = Custom(description = "Когда захотите")
                     )
                 ),
             )

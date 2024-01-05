@@ -14,10 +14,8 @@ import javax.inject.Inject
 
 @HiltAndroidApp
 class MedpollApplication : Application() {
-    @Production
     @Inject lateinit var repositories: IRepositories
 
-    @Production
     @Inject lateinit var medpollNotificationsManager: MedpollNotificationsManager
 
     override fun onCreate() {
