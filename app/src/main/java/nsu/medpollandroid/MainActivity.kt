@@ -41,31 +41,35 @@ class MainActivity : ComponentActivity() {
                         CardsUI(cards, goToPrescriptionsFunc)
                     }
                     composable(
-                        "prescription/{apiUrl}/{id}",
+                        "prescription/{cardUUID}/{apiUrl}/{id}",
                         arguments = listOf(
+                            navArgument("cardUUID") { type = NavType.StringType },
                             navArgument("apiUrl") { type = NavType.StringType },
                             navArgument("id") { type = NavType.LongType }
                         )
                     ) {backStackEntry ->
+                        val cardUUID = backStackEntry.arguments!!.getString("cardUUID")!!
                         val apiUrl = backStackEntry.arguments!!.getString("apiUrl")!!
                         val encodedUrl = URLEncoder.encode(apiUrl, StandardCharsets.UTF_8.toString())
                         val id = backStackEntry.arguments!!.getLong("id")
                         activityViewModel.readPrescriptionFor(apiUrl, id)
                         PrescriptionInfo(prescription) {
-                            navController.navigate(String.format("report_form/%s/%d", encodedUrl, id))
+                            navController.navigate(String.format("report_form/%s/%s/%d", cardUUID, encodedUrl, id))
                         }
                     }
                     composable(
-                        "report_form/{apiUrl}/{id}",
+                        "report_form/{cardUUID}/{apiUrl}/{id}",
                         arguments = listOf(
+                            navArgument("cardUUID") { type = NavType.StringType },
                             navArgument("apiUrl") { type = NavType.StringType },
                             navArgument("id") { type = NavType.LongType }
                         )
                     ) {backStackEntry ->
+                        val cardUUID = backStackEntry.arguments!!.getString("cardUUID")!!
                         val apiUrl = backStackEntry.arguments!!.getString("apiUrl")!!
                         val id = backStackEntry.arguments!!.getLong("id")
                         activityViewModel.readPrescriptionFor(apiUrl, id)
-                        ReportForm(prescription, {
+                        ReportForm(prescription, {request ->
                             navController.popBackStack()
                         })
                     }
@@ -86,7 +90,7 @@ class MainActivity : ComponentActivity() {
                             activityViewModel.updateLocalPrescriptionsListFor(apiUrl, cardUuid)
                         }
                         val goToPrescriptionFunc = { id: Long ->
-                            navController.navigate(String.format("prescription/%s/%d", encodedUrl, id))
+                            navController.navigate(String.format("prescription/%s/%s/%d", cardUuid, encodedUrl, id))
                         }
                         PrescriptionsUI(
                             prescriptions,

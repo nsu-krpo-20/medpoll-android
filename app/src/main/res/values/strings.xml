@@ -37,4 +37,5 @@
     <string name="report_form_title">Формирование отчета</string>
     <string name="add_report_button_text">Добавить отчет</string>
     <string name="complete_report_button_text">Сформировать отчет</string>
+    <string name="feedback">Обратная связь</string>
 </resources>

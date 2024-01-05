@@ -38,6 +38,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import nsu.medpollandroid.R
+import nsu.medpollandroid.data.ReportDataRequest
 import nsu.medpollandroid.data.prescriptions.PrescriptionInfoData
 import nsu.medpollandroid.ui.theme.HospitalGreen
 import nsu.medpollandroid.ui.theme.HospitalRed
@@ -47,7 +48,7 @@ import java.util.Calendar
 import java.util.Date
 
 @Composable
-fun ReportForm(prescription: State<PrescriptionInfoData?>, onCompleteReportClick: () -> Unit) {
+fun ReportForm(prescription: State<PrescriptionInfoData?>, onCompleteReportClick: (ReportDataRequest) -> Unit) {
     val data = prescription.value ?: return
     val medicineValid = data.medicines.map {medicine ->
         periodValidOn(medicine.period, data.creationTimestamp, Date())
@@ -57,6 +58,9 @@ fun ReportForm(prescription: State<PrescriptionInfoData?>, onCompleteReportClick
     }.toList()
     var medicineClicked by rememberSaveable { mutableStateOf(MutableList(data.medicines.size) { _ -> false }) }
     var metricText by rememberSaveable { mutableStateOf(MutableList(data.metrics.size) { _ -> "" }) }
+    var feedback by rememberSaveable {
+        mutableStateOf("")
+    }
 
     Surface(
         modifier = Modifier.fillMaxSize()
@@ -75,7 +79,25 @@ fun ReportForm(prescription: State<PrescriptionInfoData?>, onCompleteReportClick
                     text = {
                         Text(stringResource(id = R.string.complete_report_button_text))
                     },
-                    onClick = onCompleteReportClick, // TODO: send report and make report json datatype
+                    onClick = {
+                      onCompleteReportClick(ReportDataRequest(
+                          prescriptionId = data.id,
+                          medsTaken = List(
+                              medicineClicked.size
+                          ) {i ->
+                              if (!medicineValid[i]) null
+                              else medicineClicked[i]
+                          },
+                          metrics = List(
+                              metricText.size
+                          ) {i ->
+                              if (!metricValid[i]) null
+                              else metricText[i]
+                          },
+                          feedback = "",
+                          time = Date().time
+                      ))
+                    }, // TODO: send report and make report json datatype
                     icon = {
                         Icon(
                             Icons.Filled.Check,
@@ -163,6 +185,24 @@ fun ReportForm(prescription: State<PrescriptionInfoData?>, onCompleteReportClick
                         }
                         Spacer(modifier = Modifier.height(8.dp))
                     }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                ExpandingColumn(
+                    text = stringResource(R.string.feedback),
+                ) {
+                    TextField(
+                        value = feedback,
+                        onValueChange = {newText ->
+                            feedback = newText
+                        }, modifier = Modifier
+                            .fillMaxWidth()
+                            .height(100.dp),
+                        colors = TextFieldDefaults.textFieldColors(
+                            textColor = Color.White
+                        )
+                    )
                 }
             }
         }
