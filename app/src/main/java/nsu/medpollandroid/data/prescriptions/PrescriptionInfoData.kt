@@ -72,9 +72,9 @@ data class Medicine(
         require(name.isNotEmpty()) {
             "Name is empty string"
         }
-        require(amount.isNotEmpty()) {
+        /*require(amount.isNotEmpty()) {
             "Amount is empty string"
-        }
+        }*/
     }
 }
 
