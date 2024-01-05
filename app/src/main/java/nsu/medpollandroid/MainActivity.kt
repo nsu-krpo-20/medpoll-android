@@ -1,20 +1,26 @@
 package nsu.medpollandroid
 
 import android.os.Bundle
+import android.util.Log
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import kotlinx.coroutines.launch
+import nsu.medpollandroid.data.MedpollApi
 import nsu.medpollandroid.ui.CardsUI
 import nsu.medpollandroid.ui.PrescriptionInfo
 import nsu.medpollandroid.ui.PrescriptionsUI
 import nsu.medpollandroid.ui.ReportForm
 import nsu.medpollandroid.ui.theme.MedpollTheme
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 
@@ -69,9 +75,19 @@ class MainActivity : ComponentActivity() {
                         val apiUrl = backStackEntry.arguments!!.getString("apiUrl")!!
                         val id = backStackEntry.arguments!!.getLong("id")
                         activityViewModel.readPrescriptionFor(apiUrl, id)
-                        ReportForm(prescription, {request ->
-                            navController.popBackStack()
-                        })
+                        ReportForm(prescription) { request ->
+                            lifecycleScope.launch {
+                                val api = Retrofit.Builder()
+                                    .baseUrl(apiUrl)
+                                    .addConverterFactory(GsonConverterFactory.create())
+                                    .build()
+                                    .create(MedpollApi::class.java)
+                                val result = api.postReport(cardUUID, request)
+                                Log.d("DEBUG", result.isSuccessful.toString())
+                                Log.d("DEBUG", result.body()?.id.toString())
+                                navController.popBackStack()
+                            }
+                        }
                     }
                     composable(
                         "prescriptions/{apiUrl}/{cardUuid}",

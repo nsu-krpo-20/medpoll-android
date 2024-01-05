@@ -38,15 +38,17 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import nsu.medpollandroid.R
+import nsu.medpollandroid.data.MedpollApi
 import nsu.medpollandroid.data.ReportDataRequest
 import nsu.medpollandroid.data.prescriptions.PrescriptionInfoData
 import nsu.medpollandroid.ui.theme.HospitalGreen
 import nsu.medpollandroid.ui.theme.HospitalRed
 import nsu.medpollandroid.utils.leftZeroPad
 import nsu.medpollandroid.utils.periodValidOn
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.Calendar
 import java.util.Date
-
 @Composable
 fun ReportForm(prescription: State<PrescriptionInfoData?>, onCompleteReportClick: (ReportDataRequest) -> Unit) {
     val data = prescription.value ?: return
@@ -94,7 +96,7 @@ fun ReportForm(prescription: State<PrescriptionInfoData?>, onCompleteReportClick
                               if (!metricValid[i]) null
                               else metricText[i]
                           },
-                          feedback = "",
+                          feedback = feedback,
                           time = Date().time
                       ))
                     }, // TODO: send report and make report json datatype
