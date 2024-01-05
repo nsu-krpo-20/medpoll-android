@@ -22,7 +22,7 @@ interface MedpollApi {
                                        @Query("cardUUID") cardUuid: String):
             Response<PrescriptionDataFromResponse>
 
-    @Headers("accept: application/json")
+    @Headers("accept: application/plain")
     @POST("reports")
     suspend fun postReport(@Query("cardUUID") cardUuid: String, @Body body: ReportDataRequest):
             Response<ReportPostResponse>
