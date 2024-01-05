@@ -75,7 +75,7 @@ fun PeriodInfo(caption: String, period: NTimesDaily) {
 }
 
 @Composable
-fun PeriodInfo(period: PrescriptionPeriod.EachNDays) {
+fun PeriodInfo(period: EachNDays) {
     PrimaryRow(color = MaterialTheme.colors.secondary, topPadding = 0.dp) {
         SecondaryText(stringResource(
             R.string.per_day_in,

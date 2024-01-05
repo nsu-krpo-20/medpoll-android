@@ -2,6 +2,10 @@ package nsu.medpollandroid.utils
 
 import androidx.compose.ui.res.stringResource
 import nsu.medpollandroid.R
+import nsu.medpollandroid.data.prescriptions.Custom
+import nsu.medpollandroid.data.prescriptions.EachNDays
+import nsu.medpollandroid.data.prescriptions.NTimesDaily
+import nsu.medpollandroid.data.prescriptions.PerWeekday
 import nsu.medpollandroid.data.prescriptions.PrescriptionPeriod
 import nsu.medpollandroid.data.prescriptions.TimeOfDay
 import nsu.medpollandroid.ui.PeriodInfo
@@ -96,9 +100,10 @@ fun periodValidOn(period: PrescriptionPeriod, timestamp: Long, date: Date): Bool
     calendar.time = date
     val weekday = calendar.get(Calendar.DAY_OF_WEEK)
     return when (period) {
-        is PrescriptionPeriod.Custom -> daysFromStart >= 0
-        is PrescriptionPeriod.EachNDays -> daysFromStart >= 0 && daysFromStart % period.period == 0L
-        is PrescriptionPeriod.NTimesDaily -> daysFromStart >= 0
-        is PrescriptionPeriod.PerWeekday -> period.weekdays[weekday - 1] != null && daysFromStart >= 0
+        is Custom -> daysFromStart >= 0
+        is EachNDays -> daysFromStart >= 0 && daysFromStart % period.period == 0L
+        is NTimesDaily -> daysFromStart >= 0
+        is PerWeekday -> period.weekdays[weekday - 1] != null && daysFromStart >= 0
+        else -> false
     }
 }
