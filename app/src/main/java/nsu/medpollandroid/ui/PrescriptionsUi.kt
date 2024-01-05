@@ -99,7 +99,8 @@ private fun SinglePrescriptionUIElem(prescription: PrescriptionEntity,
         ) {
             Text(
                 text = String.format(stringResource(R.string.prescription_name_format),
-                                    prescription.id + 1 /* To avoid frightening #0 */),
+                                    prescription.id + 1,
+                                    if(prescription.isActive) "" else "(неактивно)"),
                 fontSize = 24.sp
             )
             Text(
