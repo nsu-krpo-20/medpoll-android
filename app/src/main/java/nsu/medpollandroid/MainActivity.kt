@@ -84,7 +84,8 @@ class MainActivity : ComponentActivity() {
                                     .create(MedpollApi::class.java)
                                 val result = api.postReport(cardUUID, request)
                                 Log.d("DEBUG", result.isSuccessful.toString())
-                                Log.d("DEBUG", result.body()?.id.toString())
+                                Log.d("DEBUG", result.code().toString())
+                                Log.d("DEBUG", result.body().toString())
                                 navController.popBackStack()
                             }
                         }

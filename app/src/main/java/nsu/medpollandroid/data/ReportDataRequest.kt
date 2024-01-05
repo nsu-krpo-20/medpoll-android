@@ -1,6 +1,7 @@
 package nsu.medpollandroid.data
 
 data class ReportDataRequest(
+    val id: Long,
     val prescriptionId: Long,
     val medsTaken: List<Boolean?>,
     val metrics: List<String?>,

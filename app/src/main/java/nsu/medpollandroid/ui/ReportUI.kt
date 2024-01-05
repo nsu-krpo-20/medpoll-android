@@ -83,6 +83,7 @@ fun ReportForm(prescription: State<PrescriptionInfoData?>, onCompleteReportClick
                     },
                     onClick = {
                       onCompleteReportClick(ReportDataRequest(
+                          id = 0,
                           prescriptionId = data.id,
                           medsTaken = List(
                               medicineClicked.size
