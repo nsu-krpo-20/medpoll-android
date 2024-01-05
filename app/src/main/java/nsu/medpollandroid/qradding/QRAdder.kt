@@ -51,13 +51,13 @@ class QRAdder {
                                         rawValue.substring(dataLength - uuidLength, dataLength)
                                     val apiUrlPart = rawValue.substring(0, dataLength - uuidLength)
                                     var apiUrl = apiUrlPart
-                                    if (apiUrlPart.substring(0, httpsPrefix.length) != httpsPrefix) {
+                                    /*if (apiUrlPart.substring(0, httpsPrefix.length) != httpsPrefix) {
                                         var beginningIdx = 0
                                         if (apiUrlPart.substring(0, httpPrefix.length) == httpPrefix) {
                                             beginningIdx = httpPrefix.length
                                         }
                                         apiUrl = httpsPrefix + apiUrlPart.substring(beginningIdx, apiUrlPart.length)
-                                    }
+                                    }*/
                                     if ('/' != apiUrl.get(apiUrl.length - 1)) {
                                         apiUrl += "/"
                                     }
