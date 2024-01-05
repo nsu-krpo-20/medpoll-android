@@ -1,7 +1,12 @@
 package nsu.medpollandroid.utils
 
+import androidx.compose.ui.res.stringResource
+import nsu.medpollandroid.R
+import nsu.medpollandroid.data.prescriptions.PrescriptionPeriod
 import nsu.medpollandroid.data.prescriptions.TimeOfDay
+import nsu.medpollandroid.ui.PeriodInfo
 import java.text.SimpleDateFormat
+import java.util.Calendar
 import java.util.Date
 
 fun <T> listOfWeekdays(
@@ -81,4 +86,19 @@ fun Int.daysString(): String {
     }
 
     return "дней"
+}
+
+fun periodValidOn(period: PrescriptionPeriod, timestamp: Long, date: Date): Boolean {
+    val millisecondsInDay = 24 * 60 * 60 * 1000
+    val startDate = Date((timestamp / millisecondsInDay) * millisecondsInDay)
+    val daysFromStart = (date.time - startDate.time) / millisecondsInDay
+    val calendar: Calendar = Calendar.getInstance()
+    calendar.time = date
+    val weekday = calendar.get(Calendar.DAY_OF_WEEK)
+    return when (period) {
+        is PrescriptionPeriod.Custom -> daysFromStart >= 0
+        is PrescriptionPeriod.EachNDays -> daysFromStart >= 0 && daysFromStart % period.period == 0L
+        is PrescriptionPeriod.NTimesDaily -> daysFromStart >= 0
+        is PrescriptionPeriod.PerWeekday -> period.weekdays[weekday - 1] != null && daysFromStart >= 0
+    }
 }

@@ -13,6 +13,7 @@ import androidx.navigation.navArgument
 import nsu.medpollandroid.ui.CardsUI
 import nsu.medpollandroid.ui.PrescriptionInfo
 import nsu.medpollandroid.ui.PrescriptionsUI
+import nsu.medpollandroid.ui.ReportForm
 import nsu.medpollandroid.ui.theme.MedpollTheme
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
@@ -47,9 +48,26 @@ class MainActivity : ComponentActivity() {
                         )
                     ) {backStackEntry ->
                         val apiUrl = backStackEntry.arguments!!.getString("apiUrl")!!
+                        val encodedUrl = URLEncoder.encode(apiUrl, StandardCharsets.UTF_8.toString())
                         val id = backStackEntry.arguments!!.getLong("id")
                         activityViewModel.readPrescriptionFor(apiUrl, id)
-                        PrescriptionInfo(prescription)
+                        PrescriptionInfo(prescription) {
+                            navController.navigate(String.format("report_form/%s/%d", encodedUrl, id))
+                        }
+                    }
+                    composable(
+                        "report_form/{apiUrl}/{id}",
+                        arguments = listOf(
+                            navArgument("apiUrl") { type = NavType.StringType },
+                            navArgument("id") { type = NavType.LongType }
+                        )
+                    ) {backStackEntry ->
+                        val apiUrl = backStackEntry.arguments!!.getString("apiUrl")!!
+                        val id = backStackEntry.arguments!!.getLong("id")
+                        activityViewModel.readPrescriptionFor(apiUrl, id)
+                        ReportForm(prescription, {
+                            navController.popBackStack()
+                        })
                     }
                     composable(
                         "prescriptions/{apiUrl}/{cardUuid}",
